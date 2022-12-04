@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class FooterController extends Controller{
+
+    /**
+     * Il metodo permette di essere reindirizzati una volta connessi al sito,
+     * la pagina è la home in caso l'utente sia autenticato al sistema, altrimenti essa è
+     * la pagina chiamata welcome (la landingPage del sito per utenti non autenticati o non iscritti)
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function welcomePage(){
+        if(Auth::user() !== null)
+            return view('home');
+
+        return view('welcome');
+    }
+
+    /**
+     * Il metodo permette di fornire la vista della pagina chi siamo
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function chiSiamo(){
+        return view('footerElements.chiSiamo');
+    }
+
+
+    /**
+     * Il metodo permette di fornire la vista della pagina dei termini d'utilizzo
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function terms(){
+        return view('footerElements.terms');
+    }
+
+
+    /**
+     * Il metodo permette di fornire la vista della pagina delle regole della piattaforma
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function regole(){
+        return view('footerElements.regole');
+    }
+
+
+}

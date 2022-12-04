@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Http\Controllers\admin;
+
+use App\Admins;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
+
+abstract class AbstractAdminController extends Controller {
+
+    protected function getAdmin($admin) {
+        return Admins::where('id',$admin)->first();
+    }
+
+    protected function getSegnalazioni ($limit) {
+        if($limit!==-1)
+            return DB::select('select A.username as user1_username,B.username as user2_username,B.id as user2_id,report_users.id,reason,description from ((report_users inner join users as A on report_users.user1_id=A.id)
+            inner join users as B on report_users.user2_id=B.id) limit '.$limit.';');
+        else
+            return DB::select('select A.username as user1_username,B.username as user2_username,B.id as user2_id,report_users.id,reason,description from ((report_users inner join users as A on report_users.user1_id=A.id)
+            inner join users as B on report_users.user2_id=B.id);');
+    }
+
+    protected function getProgetti($limit) {
+        if($limit!==-1)
+            return DB::select('select projects.name,report_projects.user_id,report_projects.project_id,report_projects.id,reason,report_projects.description from ((report_projects inner join projects on report_projects.project_id=projects.id)
+            inner join users on report_projects.user_id=users.id)limit '.$limit.';');
+        else
+            return DB::select('select report_projects.user_id,report_projects.project_id,report_projects.id,reason,report_projects.description from ((report_projects inner join projects on report_projects.project_id=projects.id)
+            inner join users on report_projects.user_id=users.id);');
+    }
+
+    protected function getIdee($limit) {
+        if($limit!==-1)
+            return DB::select('select id,name,description from projects limit '.$limit.';');
+        else
+            return DB::select('select id,name,description from projects;');
+    }
+
+}

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width-device-width, initial-scale=1.0">
+    <meta http-equiv="x-ua-compatible" content="ie-edge">
+    <title>Hai ricevuto una segnalazione</title>
+</head>
+<body>
+    Caro {{$nomeUtente}},<br>
+   <p> Dobbiamo comunicarle che ha ricevuto una sanzione da parte di un altro utente di TeamUp,
+    la segnalazione adesso verrà gestita dal nostro team di moderatori e verrà informato in caso
+       di eventuali sanzioni ricevute. Il motivo della segnalazione è: </p>
+    <h2> {{$motivoSanzione}} </h2>
+    <br><br>
+    <a href="{{route('home')}}"><p>Lo staff di TeamUp</p></a>
+</body>
+</html>

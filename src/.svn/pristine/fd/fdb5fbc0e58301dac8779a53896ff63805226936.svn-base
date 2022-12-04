@@ -1,0 +1,105 @@
+@extends('admin.adminprofiletemp')
+
+@section('content')
+    @parent
+
+    <div class="col" style="margin-left: 21.2%; width: 78%;">
+        <div class="container-fluid">
+            <div class="row" style="height: 100%;">
+                <div class="col mx-auto bg-white rounded shadow">
+                    <div class="table-responsive">
+                        <table id="allprojects" class="table table-fixed">
+                            <caption></caption>
+                            <tbody>
+                            @foreach($all_reports_users as $report_user)
+                                @if(\Illuminate\Support\Facades\DB::table('report_users')->where('id',$report_user->id)->pluck('managed')->first()===0)
+                                <tr>
+                                    <th scope="row" class="col-2">
+                                        {{$report_user->user1_username}} ha segnalato {{$report_user->user2_username}}
+                                        <div id="description{{$report_user->id}}" class="row" hidden="true" style="margin-left: 0%; width: 100%;">
+                                            <br>Motivo:
+                                            @if($report_user->reason===1)
+                                                E' spam
+                                            @else
+                                                Non è appropriato
+                                            @endif
+                                            <br><br>Descrizione:<br>
+                                            {{$report_user->description}}
+                                            <div class="row" style="margin-top: 5%; margin-left: 80%;">
+                                                <a><button id="sanzbtn" onclick="showMod({{$report_user->id}},{{$report_user->user2_id}})" name="btn" type="button" class="btn" value="C'ho il flow" style="height: 35px; width: 100px; color: #ffffff; background-color: red; border-color: red;">Sanziona</button></a>
+                                                <a href="{{route('acceptreport',['report'=>2,'id_report'=>$report_user->id])}}"><button class="btn" style="margin-left: 6px; height: 35px; width: 100px; color: #ffffff; background-color: #353132; border-color: #353132;">Rifiuta</button></a>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th scope="row" class="col-2">
+                                        <button id="showdescbtn{{$report_user->id}}" class="btn" onclick="showDescription({{$report_user->id}})" style="font-size: 18px;">+</button>
+                                    </th>
+                                </tr>
+                                @endif
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div><!-- End -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="confdial" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Accetta sanzione</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="post" action="{{route('acceptreport',['report'=>1])}}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-body">
+                        <p>Confermi la sanzione dell'utente?</p>
+                            <div class="form-group row">
+                                <label for="closedate"
+                                       class="col-md-4 col-form-label text-md-right">{{ __('Data di fine:') }}</label>
+
+                                <div class="col-md-6">
+                                    <input id="closedate" type="date"
+                                           class="form-control @error('birth_date') is-invalid @enderror"
+                                           name="closedate" value="{{ old('birth_date') }}" required>
+
+                                    @error('birth_date')
+                                    <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        <div class="modal-footer">
+                            <input id="hiddenid_report" name="hiddenid_report" type="text" hidden="true">
+                            <input id="hiddenid_user_reported" name="hiddenid_user_reported" type="text" hidden="true">
+                            <input type="submit" class="btn btn-primary" value="Conferma">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@section('scripts')
+    <script src="{{asset('/js/scriptAdmin.js')}}"></script>
+    <script>
+        function showMod(id_report,user_reported) {
+
+            let hiddenid_report = document.getElementById('hiddenid_report');
+            let username_user_reported = document.getElementById('hiddenid_user_reported');
+            hiddenid_report.value = id_report;
+            username_user_reported.value = user_reported;
+
+            $(document).ready(function () {
+                $("#confdial").modal();
+            });
+        }
+    </script>
+@endsection

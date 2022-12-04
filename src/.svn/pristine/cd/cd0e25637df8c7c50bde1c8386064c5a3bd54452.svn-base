@@ -1,0 +1,173 @@
+@extends('layouts.app')
+
+@section('content')
+    <header class="masthead text-black text-center" style="background-color: white">
+        <div class="container"><img class="img-fluid d-block mx-auto mb-5" src="{{asset('/images/app/logo.png')}}"
+                                    style="font-style: italic; max-width:400px " alt="">
+            <h1>Ricerca l'idea giusta per te</h1>
+            <label class="font-weight-light-mb-0" style="font-size: 30px">Trova l'idea che fa per te e collabora per
+                realizzarla</label>
+        </div>
+    </header>
+    <form method="POST" action="{{route('effettuaRicerca')}}" onsubmit="return searchIdeasCheck()">
+        @csrf
+        <div class="container mt-1">
+            <div class="d-flex justify-content-center h-40">
+                <div class="searchbar">
+                    <input class="search_input" type="search" name="name" id="name" placeholder="Cerca un'idea...">
+                    <button type="submit" class="search_icon btn btn-light rounded-circle" onclick="searchIdeasCheck()">
+                        <i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <label for="competences" class="col-md-4 col-form-label text-right"> Categoria <br>
+                    <span class="text-small text-info">Opzionale</span>
+                </label>
+                <div class="col-md-6" style="max-width: 500px">
+                    <select class="custom-select" data-browse="down" id="category_id" name="category_id">
+                        <option selected value="-1">Seleziona una categoria</option>
+                        @foreach($categorie as $categoria)
+                            <option value="{{$categoria->id}}"> {{$categoria->category}} </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+        </div>
+    </form>
+    <section id="portfolio" class="portfolio mt-2">
+        <div class="container">
+            <h2 class="text-uppercase text-center text-secondary">LE ULTIME IDEE INSERITE</h2>
+            <hr class="star-dark mb-5">
+        </div>
+    </section>
+    <div id="model" style="border-top:1px black solid">
+
+        @foreach($ideas as $idea)
+            <section id="contact" style="background-color: #f8b323;height: 45vh;border-bottom: 1px black solid;">
+                <div class="d-flex">
+                    @if($idea->image != null)
+                        <img class="ml-2 mt-3 " src="{{asset('/storage/'.$idea->image)}}"
+                             style="width: 200px; height: 201px; max-height: 250px; max-width: 250px; flex:1"
+                             alt="immagine idea">
+                    @else
+                        <img class="ml-2 mt-3" src="{{asset('/images/app/placeholder.png')}}"
+                             style="width: 200px; height: 200px; max-height: 250px; max-width: 250px; flex:1;"
+                             alt="immagine idea">
+                    @endif
+                    <h2 class="ml-3" style="flex:3"><a class="text-dark" href="{{route('riepilogativePage', $idea->id)}}" style="text-decoration-color: black"> {{$idea->name}} </a></h2>
+                    <div class="btn-group dropleft">
+                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false" style="box-shadow: none">
+                        </button>
+                        <div class="dropdown-menu">
+                            <button type="button" id="segnala_{{$idea->id}}" class="dropdown-item" data-toggle="modal"
+                                    data-target="#segnalazioneModal" data-id="{{$idea->id}}"
+                                    onclick="startModal({{$idea->id}},2, 'Idea')">Segnala
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <p class="ml-lg-4" style=" position:relative; left:240px; bottom: 100px;
+                        width: 70%;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;"> {{$idea->description}}  </p>
+                <button class="btn btn-outline-dark float-lg-right"
+                        style="position:relative; top:-43px;max-height: 30px;max-width: 250px;" data-toggle="modal"
+                        data-target="#partecipazioneModal", data-id="{{$idea->id}}" onclick="startModal({{$idea->id}},1,'Request')">Richiedi di partecipare
+                </button>
+            </section>
+        @endforeach
+    </div>
+    @include('components.report')
+    @include('components.partecipationRequest')
+    <div class="mr-2  text-right">
+        <a href="{{route('allIdeas')}}" style="color: black; font-size: large"> Visualizza tutte le idee progettuali</a>
+    </div>
+
+
+@endsection
+
+@section('styles')
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+          integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic">
+@endsection
+
+@section('css')
+    <style>
+        .searchbar {
+            margin-bottom: auto;
+            margin-top: auto;
+            height: 55px;
+            border: 1px solid black;
+            background-color: white;
+            border-radius: 30px;
+            padding: 10px;
+        }
+
+        .search_input {
+            color: black;
+            border: 0;
+            outline: 0;
+            background: none;
+            width: 0;
+            caret-color: black;
+            line-height: 40px;
+            transition: width 0.4s linear;
+        }
+
+        .searchbar:hover > .search_input {
+            padding: 0 10px;
+            width: 600px;
+            caret-color: black;
+            transition: width 0.4s linear;
+        }
+
+        .searchbar:hover > .search_icon {
+            background: #f8b323;
+            color: black;
+        }
+
+        .search_icon {
+            height: 36px;
+            width: 40px;
+            float: right;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 100%;
+            color: #f8b323;
+            text-decoration: none;
+        }
+
+    </style>
+@endsection
+
+@section('scripts')
+    <script src="{{asset('/js/scriptReport.js')}}"></script>
+    <script>
+        function searchIdeasCheck() {
+            let input = document.getElementById('name')
+            let category = document.getElementById('category_id')
+            let valid = true
+            const invalidCategory = -1
+
+            if (input.value === '')
+                if (category.options[category.selectedIndex].value === invalidCategory)
+                    valid = false
+
+            return valid
+        }
+
+
+        function checkRequest(){
+
+        }
+
+    </script>
+@endsection
+

@@ -1,0 +1,17 @@
+function showDescription(idadmin) {
+    let showdescbtn = document.getElementById('showdescbtn'+idadmin);
+    let description = document.getElementById('description'+idadmin);
+
+    if(description.hidden===true) {
+        showdescbtn.innerText = "-";
+        description.hidden = false;
+    } else {
+        showdescbtn.innerText = "+";
+        description.hidden = true;
+    }
+}
+
+function showAddAdmin() {
+    let addadminbtn = document.getElementById('addadminbtn');
+    addadminbtn.hidden=!addadminbtn.hidden;
+}

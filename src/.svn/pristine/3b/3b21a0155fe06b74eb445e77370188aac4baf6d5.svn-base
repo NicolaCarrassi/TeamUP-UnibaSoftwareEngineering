@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Http\Controllers\Utility;
+
+use App\Http\Controllers\Controller;
+use App\ReportProject;
+use App\ReportUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class ReportController extends Controller{
+
+    const USER_ID = "user_id";
+    const PROJECT_ID = "project_id";
+    const REASON = "reason";
+    const DESCRIPTION = "description";
+    const DATA_CREAZIONE= "created_at";
+
+
+    public function makeReportRequest(Request $request){
+        $data = $request->all();
+
+
+        if($data[self::DESCRIPTION] !== null) {
+            ReportProject::Create([
+                self::USER_ID => Auth::id(),
+                self::PROJECT_ID => $data[self::PROJECT_ID],
+                self::REASON => $data[self::REASON],
+                self::DATA_CREAZIONE => now(),
+                self::DESCRIPTION => $data[self::DESCRIPTION]
+            ]);
+        } else {
+            ReportProject::Create([
+                self::USER_ID => Auth::id(),
+                self::PROJECT_ID => $data[self::PROJECT_ID],
+                self::REASON => $data[self::REASON],
+                self::DATA_CREAZIONE => now()
+            ]);
+        }
+
+        return redirect()->back();
+    }
+
+    public function makeReportRequestUser(Request $request) {
+        $data = $request->all();
+
+        if($data[self::DESCRIPTION] !== null) {
+            ReportUsers::Create([
+                'user1_id' => Auth::id(),
+                'user2_id' => $request->input('reported_user_id'),
+                self::REASON => $data[self::REASON],
+                self::DATA_CREAZIONE => now(),
+                self::DESCRIPTION => $data[self::DESCRIPTION]
+            ]);
+        } else {
+            ReportUsers::Create([
+                self::USER_ID => Auth::id(),
+                self::REASON => $data[self::REASON],
+                self::DATA_CREAZIONE => now()
+            ]);
+        }
+
+        return redirect()->back();
+    }
+
+}

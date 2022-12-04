@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\User;
+
+class StoricoProgController extends Controller
+{
+    public function showStoricoProg($user) {
+        return view('storicoprog.storicoprog',['user' => User::find($user)]);
+    }
+}

@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class FooterController extends Controller{
+
+    public function welcomePage(){
+        return view('welcome');
+    }
+
+    public function chiSiamo(){
+        return view('/footerElements/chiSiamo');
+    }
+
+    public function terms(){
+        return view('/footerElements/terms');
+    }
+
+    public function regole(){
+        return view('/footerElements/regole');
+    }
+
+
+}

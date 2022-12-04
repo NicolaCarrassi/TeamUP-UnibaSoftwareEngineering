@@ -1,0 +1,114 @@
+@extends('profileview.profiletemp')
+
+@section('content')
+    @parent
+
+    <div class="col pl-0"  style="margin-left: 25%; width: 60%;">
+        <div class="row" style="width: 30%; padding-left: 1%;">
+            <h1>Modifica Profilo</h1>
+        </div>
+        <form method="post" action="{{route('confmod')}}" style="margin-top:10%; width: 50%;">
+            @csrf
+            <div class="form-group">
+                <input type="text" class="form-control" name="username" placeholder="Username">
+            </div>
+            <div class="form-group">
+                <input type="email" class="form-control" name="email" placeholder="name@example.com">
+            </div>
+            <!--<div class="form-group">
+                <textarea class="form-control" name="info" id="exampleFormControlTextarea1" rows="3" placeholder="Info"></textarea>
+            </div>-->
+            <div class="form-group row">
+                <label for="competences" class="col-md-4 col-form-label text-right"> Inserisci la lista
+                    <br>delle tue competenze<br>
+                </label>
+
+                <!-- lista delle competenze presa da database -->
+                <div class="col-md-6">
+                    <select class="custom-select" data-browse="down" id="competences"
+                            name="competences">
+                        <option selected value="-1">Seleziona una competenza</option>
+                        @foreach($allcompetenze as $competenza)
+                            <option
+                                value="{{$competenza->competence}}"> {{$competenza->competence}}</option>
+                        @endforeach
+                    </select>
+
+                    <!-- Lista per la selezione dei livelli delle competenze-->
+                    <div class="d-flex">
+                        <select class="custom-select offset-lg-0 mt-3 d-flex" data-browse="down"
+                                id="livello"
+                                aria-label="Aggiungi competenza">
+                            <option value="0"> Seleziona il livello...</option>
+                            <option value="1"> Scarsa</option>
+                            <option value="2"> Intermedia</option>
+                            <option value="3"> Avanzata</option>
+                        </select>
+
+                        <!-- Tasto per l'aggiunta delle competenze -->
+                        <div class="input-group-prepend  mt-3">
+                            <button class="btn btn-outline-secondary" type="button"
+                                    onclick="addElementInTable()">
+                                Aggiungi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="otherCompetences" class="col-md-4 col-form-label text-right"> Altre competenze </label>
+                <div class="col-md-6">
+                    <input class="form-control"  type="text" id="otherCompetences" name="otherCompetences" placeholder="Inserisci altre competenze">
+                    <div class="d-flex">
+                        <select class="custom-select offset-lg-0 mt-3 d-flex" data-browse="down" id="livelloNewCompetences"
+                                aria-label="Aggiungi competenza">
+                            <option value="0"> Seleziona il livello...</option>
+                            <option value="1"> Scarsa</option>
+                            <option value="2"> Intermedia</option>
+                            <option value="3"> Avanzata</option>
+                        </select>
+
+                        <div class="input-group-prepend  mt-3">
+                            <button class="btn btn-outline-secondary" type="button" onclick="altreCompetenze()">
+                                Aggiungi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table class="table align-content-center" id="lista_competenze" name="lista_competenze">
+                <caption>Livello Competenza</caption>
+                <thead>
+                <tr>
+                    <th scope="col">Competenza</th>
+                    <th scope="col">Livello</th>
+                    <th scope="col">Rimuovi</th>
+                </tr>
+                @foreach($usercomp as $competenza)
+                    <tr>
+                        <td id="{{$competenza->competence}}">{{$competenza->competence}}</td>
+                        @switch($competenza->level)
+                            @case(1)
+                            <td id="{{$competenza->level}}">Scarsa</td>
+                            @break
+                            @case(2)
+                            <td id="{{$competenza->level}}">Intermedia</td>
+                            @break
+                            @case(3)
+                            <td id="{{$competenza->level}}">Avanzata</td>
+                            @break
+                        @endswitch
+                        <td><button type="button" class="btn btn-secondary-sm" onclick="removeRow(this)">-</button></td>
+                        <td><input id="{{str_replace(' ','_',$competenza->competence)}}" name="{{str_replace(' ','_',$competenza->competence)}}" type="hidden" value="{{$competenza->level}}"></td>
+                    </tr>
+                @endforeach
+                </thead>
+            </table>
+            <input type="submit" class="btn btn-primary" value="Invia">
+        </form>
+    </div>
+@endsection
+
+@section('scripts')
+    <script src="{{asset('/js/scriptCompetenze.js')}}"></script>
+@endsection

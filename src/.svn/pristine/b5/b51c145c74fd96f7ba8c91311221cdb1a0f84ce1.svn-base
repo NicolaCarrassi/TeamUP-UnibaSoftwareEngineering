@@ -1,0 +1,749 @@
+<?php
+    define('DEBUG', 'debug');
+    define('LOCAL', 'local');
+    define('USERS', 'users');
+    define('DRIVER', 'driver');
+    define('PROVIDER', 'provider');
+    define('TABLE', 'table');
+    define('DEF', 'default');
+    define('CONNECTIONS', 'connections');
+    define('PUSHER','pusher');
+    define('SECRET', 'secret');
+    define('OPZIONI','options');
+    define('CLUSTER', 'cluster');
+    define('REDIS', 'redis');
+    define('CONNESSIONE','connection');
+    define('CACHE','cache');
+    define('VETTORE','array');
+    define('DATA_BASE','database');
+    define('LOCAL_HOST','127.0.0.1');
+    define('FUSO','us-east-1');
+    define('REGIONE','region');
+    define('END_POINT','endpoint');
+    define('PREFISSO','prefix');
+    define('PATHS','paths');
+    define('MY_SQL','mysql');
+    define('DB_NAME','teamup');
+    define('USERNAME','username');
+    define('INFORMAZIONE_NASCOSTA','password');
+    define('CHARSET','charset');
+    define('PREFISSI_INDICI','prefix_indexes');
+    define('PUBBLICO','public');
+    define('STACK','stack');
+    define('SINGOLO','single');
+    define('LARAVEL_LOG_PATH','C:\\xampp\\htdocs\\fullstackexception\\storage\\logs/laravel.log');
+    define('LIVELLO','level');
+    define('MONOLOG','monolog');
+    define('HANDLER','handler');
+    define('TRANSPORT','transport');
+    define('MAIL_GUN','mailgun');
+    define('POST_MARK','postmark');
+    define('CODA','queue');
+    define('RIPROVA_DOPO','retry_after');
+
+
+return array (
+  'app' =>
+  array (
+    'name' => 'TeamUp',
+    'env' => LOCAL,
+    DEBUG => true,
+    'url' => 'http://localhost',
+    'asset_url' => NULL,
+    'timezone' => 'UTC',
+    'locale' => 'it',
+    'fallback_locale' => 'en',
+    'faker_locale' => 'en_US',
+    'key' => 'base64:WnsJxSr9zEfy/Z4uxsQUjIx/Qpw5jko8rfE4A6AUKUo=',
+    'cipher' => 'AES-256-CBC',
+    'providers' =>
+    array (
+      0 => 'Illuminate\\Auth\\AuthServiceProvider',
+      1 => 'Illuminate\\Broadcasting\\BroadcastServiceProvider',
+      2 => 'Illuminate\\Bus\\BusServiceProvider',
+      3 => 'Illuminate\\Cache\\CacheServiceProvider',
+      4 => 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider',
+      5 => 'Illuminate\\Cookie\\CookieServiceProvider',
+      6 => 'Illuminate\\Database\\DatabaseServiceProvider',
+      7 => 'Illuminate\\Encryption\\EncryptionServiceProvider',
+      8 => 'Illuminate\\Filesystem\\FilesystemServiceProvider',
+      9 => 'Illuminate\\Foundation\\Providers\\FoundationServiceProvider',
+      10 => 'Illuminate\\Hashing\\HashServiceProvider',
+      11 => 'Illuminate\\Mail\\MailServiceProvider',
+      12 => 'Illuminate\\Notifications\\NotificationServiceProvider',
+      13 => 'Illuminate\\Pagination\\PaginationServiceProvider',
+      14 => 'Illuminate\\Pipeline\\PipelineServiceProvider',
+      15 => 'Illuminate\\Queue\\QueueServiceProvider',
+      16 => 'Illuminate\\Redis\\RedisServiceProvider',
+      17 => 'Illuminate\\Auth\\Passwords\\PasswordResetServiceProvider',
+      18 => 'Illuminate\\Session\\SessionServiceProvider',
+      19 => 'Illuminate\\Translation\\TranslationServiceProvider',
+      20 => 'Illuminate\\Validation\\ValidationServiceProvider',
+      21 => 'Illuminate\\View\\ViewServiceProvider',
+      22 => 'App\\Providers\\AppServiceProvider',
+      23 => 'App\\Providers\\AuthServiceProvider',
+      24 => 'App\\Providers\\EventServiceProvider',
+      25 => 'App\\Providers\\RouteServiceProvider',
+    ),
+    'aliases' =>
+    array (
+      'App' => 'Illuminate\\Support\\Facades\\App',
+      'Arr' => 'Illuminate\\Support\\Arr',
+      'Artisan' => 'Illuminate\\Support\\Facades\\Artisan',
+      'Auth' => 'Illuminate\\Support\\Facades\\Auth',
+      'Blade' => 'Illuminate\\Support\\Facades\\Blade',
+      'Broadcast' => 'Illuminate\\Support\\Facades\\Broadcast',
+      'Bus' => 'Illuminate\\Support\\Facades\\Bus',
+      'Cache' => 'Illuminate\\Support\\Facades\\Cache',
+      'Config' => 'Illuminate\\Support\\Facades\\Config',
+      'Cookie' => 'Illuminate\\Support\\Facades\\Cookie',
+      'Crypt' => 'Illuminate\\Support\\Facades\\Crypt',
+      'DB' => 'Illuminate\\Support\\Facades\\DB',
+      'Eloquent' => 'Illuminate\\Database\\Eloquent\\Model',
+      'Event' => 'Illuminate\\Support\\Facades\\Event',
+      'File' => 'Illuminate\\Support\\Facades\\File',
+      'Gate' => 'Illuminate\\Support\\Facades\\Gate',
+      'Hash' => 'Illuminate\\Support\\Facades\\Hash',
+      'Http' => 'Illuminate\\Support\\Facades\\Http',
+      'Lang' => 'Illuminate\\Support\\Facades\\Lang',
+      'Log' => 'Illuminate\\Support\\Facades\\Log',
+      'Mail' => 'Illuminate\\Support\\Facades\\Mail',
+      'Notification' => 'Illuminate\\Support\\Facades\\Notification',
+      'Password' => 'Illuminate\\Support\\Facades\\Password',
+      'Queue' => 'Illuminate\\Support\\Facades\\Queue',
+      'Redirect' => 'Illuminate\\Support\\Facades\\Redirect',
+      'Redis' => 'Illuminate\\Support\\Facades\\Redis',
+      'Request' => 'Illuminate\\Support\\Facades\\Request',
+      'Response' => 'Illuminate\\Support\\Facades\\Response',
+      'Route' => 'Illuminate\\Support\\Facades\\Route',
+      'Schema' => 'Illuminate\\Support\\Facades\\Schema',
+      'Session' => 'Illuminate\\Support\\Facades\\Session',
+      'Storage' => 'Illuminate\\Support\\Facades\\Storage',
+      'Str' => 'Illuminate\\Support\\Str',
+      'URL' => 'Illuminate\\Support\\Facades\\URL',
+      'Validator' => 'Illuminate\\Support\\Facades\\Validator',
+      'View' => 'Illuminate\\Support\\Facades\\View',
+    ),
+  ),
+  'auth' =>
+  array (
+    'defaults' =>
+    array (
+      'guard' => 'web',
+      'passwords' => USERS,
+    ),
+    'guards' =>
+    array (
+      'web' =>
+      array (
+        DRIVER => 'session',
+        PROVIDER => USERS,
+      ),
+      'api' =>
+      array (
+        DRIVER => 'token',
+        PROVIDER => USERS,
+        'hash' => false,
+      ),
+    ),
+    'providers' =>
+    array (
+      USERS =>
+      array (
+        DRIVER => 'eloquent',
+        'model' => 'App\\User',
+      ),
+    ),
+    'passwords' =>
+    array (
+      USERS =>
+      array (
+        PROVIDER => USERS,
+        TABLE => 'password_resets',
+        'expire' => 60,
+        'throttle' => 60,
+      ),
+    ),
+    'password_timeout' => 10800,
+  ),
+  'broadcasting' =>
+  array (
+    DEF => 'log',
+    CONNECTIONS =>
+    array (
+      PUSHER =>
+      array (
+        DRIVER => PUSHER,
+        'key' => 'b27196d580d4ae400ff9',
+        SECRET => '98b950b10b09bddc6a18',
+        'app_id' => '1019500',
+        OPZIONI =>
+        array (
+          CLUSTER => 'eu',
+          'useTLS' => true,
+        ),
+      ),
+      REDIS =>
+      array (
+        DRIVER => REDIS,
+        'connection' => DEF,
+      ),
+      'log' =>
+      array (
+        DRIVER => 'log',
+      ),
+      'null' =>
+      array (
+        DRIVER => 'null',
+      ),
+    ),
+  ),
+  CACHE =>
+  array (
+    DEF => 'file',
+    'stores' =>
+    array (
+      'apc' =>
+      array (
+        DRIVER => 'apc',
+      ),
+      VETTORE =>
+      array (
+        DRIVER => VETTORE,
+        'serialize' => false,
+      ),
+      DATA_BASE =>
+      array (
+        DRIVER => DATA_BASE,
+        TABLE => CACHE,
+        CONNESSIONE=> NULL,
+      ),
+      'file' =>
+      array (
+        DRIVER => 'file',
+        'path' => 'C:\\xampp\\htdocs\\fullstackexception\\storage\\framework/cache/data',
+      ),
+      'memcached' =>
+      array (
+        DRIVER => 'memcached',
+        'persistent_id' => NULL,
+        'sasl' =>
+        array (
+          0 => NULL,
+          1 => NULL,
+        ),
+        OPZIONI =>
+        array (
+        ),
+        'servers' =>
+        array (
+          0 =>
+          array (
+            'host' => LOCAL_HOST,
+            'port' => 11211,
+            'weight' => 100,
+          ),
+        ),
+      ),
+      REDIS =>
+      array (
+        DRIVER => REDIS,
+        CONNESSIONE=> CACHE,
+      ),
+      'dynamodb' =>
+      array (
+        DRIVER => 'dynamodb',
+        'key' => '',
+        SECRET => '',
+        REGIONE => FUSO,
+        TABLE => CACHE,
+        END_POINT => NULL,
+      ),
+    ),
+    PREFISSO => 'teamup_cache',
+  ),
+  'chatify' =>
+  array (
+    'name' => 'TeamUp Chat',
+    'path' => 'chat',
+    'middleware' => 'auth',
+    PUSHER =>
+    array (
+      'key' => 'b27196d580d4ae400ff9',
+      SECRET => '98b950b10b09bddc6a18',
+      'app_id' => '1019500',
+      OPZIONI =>
+      array (
+        CLUSTER => 'eu',
+        'encrypted' => false,
+      ),
+    ),
+    'user_avatar' =>
+    array (
+      'folder' => 'users-avatar',
+      DEF => 'avatar.png',
+    ),
+    'attachments' =>
+    array (
+      'folder' => 'attachments',
+      'route' => 'attachments.download',
+    ),
+  ),
+  'cors' =>
+  array (
+    PATHS =>
+    array (
+      0 => 'api/*',
+    ),
+    'allowed_methods' =>
+    array (
+      0 => '*',
+    ),
+    'allowed_origins' =>
+    array (
+      0 => '*',
+    ),
+    'allowed_origins_patterns' =>
+    array (
+    ),
+    'allowed_headers' =>
+    array (
+      0 => '*',
+    ),
+    'exposed_headers' =>
+    array (
+    ),
+    'max_age' => 0,
+    'supports_credentials' => false,
+  ),
+  DATA_BASE =>
+  array (
+    DEF => MY_SQL,
+    CONNECTIONS =>
+    array (
+      'sqlite' =>
+      array (
+        DRIVER => 'sqlite',
+        'url' => NULL,
+        DATA_BASE => DB_NAME,
+        PREFISSO => '',
+        'foreign_key_constraints' => true,
+      ),
+      MY_SQL =>
+      array (
+        DRIVER => MY_SQL,
+        'url' => NULL,
+        'host' => LOCAL_HOST,
+        'port' => '3306',
+        DATA_BASE => DB_NAME,
+        USERNAME => 'root',
+        INFORMAZIONE_NASCOSTA => '',
+        'unix_socket' => '',
+        CHARSET => 'utf8mb4',
+        'collation' => 'utf8mb4_unicode_ci',
+        PREFISSO => '',
+        PREFISSI_INDICI => true,
+        'strict' => true,
+        'engine' => NULL,
+        OPZIONI =>
+        array (
+        ),
+      ),
+      'pgsql' =>
+      array (
+        DRIVER => 'pgsql',
+        'url' => NULL,
+        'host' => LOCAL_HOST,
+        'port' => '3306',
+        DATA_BASE => DB_NAME,
+        USERNAME => 'root',
+        INFORMAZIONE_NASCOSTA => '',
+        CHARSET => 'utf8',
+        PREFISSO => '',
+        PREFISSI_INDICI => true,
+        'schema' => PUBBLICO,
+        'sslmode' => 'prefer',
+      ),
+      'sqlsrv' =>
+      array (
+        DRIVER => 'sqlsrv',
+        'url' => NULL,
+        'host' => LOCAL_HOST,
+        'port' => '3306',
+        DATA_BASE => DB_NAME,
+        USERNAME => 'root',
+        INFORMAZIONE_NASCOSTA => '',
+        CHARSET => 'utf8',
+        PREFISSO => '',
+        PREFISSI_INDICI => true,
+      ),
+    ),
+    'migrations' => 'migrations',
+    REDIS =>
+    array (
+      'client' => 'phpredis',
+      OPZIONI =>
+      array (
+        CLUSTER => REDIS,
+        PREFISSO => 'teamup_database_',
+      ),
+      DEF =>
+      array (
+        'url' => NULL,
+        'host' => LOCAL_HOST,
+        INFORMAZIONE_NASCOSTA => NULL,
+        'port' => '6379',
+        DATA_BASE => '0',
+      ),
+      CACHE =>
+      array (
+        'url' => NULL,
+        'host' => LOCAL_HOST,
+        INFORMAZIONE_NASCOSTA => NULL,
+        'port' => '6379',
+        DATA_BASE => '1',
+      ),
+    ),
+  ),
+  'filesystems' =>
+  array (
+    DEF => LOCAL,
+    'cloud' => 's3',
+    'disks' =>
+    array (
+      LOCAL =>
+      array (
+        DRIVER => LOCAL,
+        'root' => 'C:\\xampp\\htdocs\\fullstackexception\\storage\\app',
+      ),
+      PUBBLICO =>
+      array (
+        DRIVER => LOCAL,
+        'root' => 'C:\\xampp\\htdocs\\fullstackexception\\storage\\app/public',
+        'url' => 'http://localhost/storage',
+        'visibility' => PUBBLICO,
+      ),
+      's3' =>
+      array (
+        DRIVER => 's3',
+        'key' => '',
+        SECRET => '',
+        REGIONE => FUSO,
+        'bucket' => '',
+        'url' => NULL,
+        END_POINT => NULL,
+      ),
+    ),
+    'links' =>
+    array (
+      'C:\\xampp\\htdocs\\fullstackexception\\public\\storage' => 'C:\\xampp\\htdocs\\fullstackexception\\storage\\app/public',
+    ),
+  ),
+  'hashing' =>
+  array (
+    DRIVER => 'bcrypt',
+    'bcrypt' =>
+    array (
+      'rounds' => 10,
+    ),
+    'argon' =>
+    array (
+      'memory' => 1024,
+      'threads' => 2,
+      'time' => 2,
+    ),
+  ),
+  'logging' =>
+  array (
+    DEF => STACK,
+    'channels' =>
+    array (
+      STACK =>
+      array (
+        DRIVER => STACK,
+        'channels' =>
+        array (
+          0 => SINGOLO,
+        ),
+        'ignore_exceptions' => false,
+      ),
+      SINGOLO =>
+      array (
+        DRIVER => SINGOLO,
+        'path' => LARAVEL_LOG_PATH,
+       LIVELLO => DEBUG,
+      ),
+      'daily' =>
+      array (
+        DRIVER => 'daily',
+        'path' => LARAVEL_LOG_PATH,
+       LIVELLO => DEBUG,
+        'days' => 14,
+      ),
+      'slack' =>
+      array (
+        DRIVER => 'slack',
+        'url' => NULL,
+        USERNAME => 'Laravel Log',
+        'emoji' => ':boom:',
+       LIVELLO => 'critical',
+      ),
+      'papertrail' =>
+      array (
+        DRIVER => MONOLOG,
+       LIVELLO => DEBUG,
+        HANDLER => 'Monolog\\Handler\\SyslogUdpHandler',
+        'handler_with' =>
+        array (
+          'host' => NULL,
+          'port' => NULL,
+        ),
+      ),
+      'stderr' =>
+      array (
+        DRIVER => MONOLOG,
+        HANDLER => 'Monolog\\Handler\\StreamHandler',
+        'formatter' => NULL,
+        'with' =>
+        array (
+          'stream' => 'php://stderr',
+        ),
+      ),
+      'syslog' =>
+      array (
+        DRIVER => 'syslog',
+       LIVELLO => DEBUG,
+      ),
+      'errorlog' =>
+      array (
+        DRIVER => 'errorlog',
+       LIVELLO => DEBUG,
+      ),
+      'null' =>
+      array (
+        DRIVER => MONOLOG,
+        HANDLER => 'Monolog\\Handler\\NullHandler',
+      ),
+      'emergency' =>
+      array (
+        'path' => LARAVEL_LOG_PATH,
+      ),
+    ),
+  ),
+  'mail' =>
+  array (
+    DEF => 'smtp',
+    'mailers' =>
+    array (
+      'smtp' =>
+      array (
+        TRANSPORT => 'smtp',
+        'host' => 'smtp.googlemail.com',
+        'port' => '465',
+        'encryption' => 'ssl',
+        USERNAME => 'teamup.fullstackexception@gmail.com',
+        INFORMAZIONE_NASCOSTA => 'MicLeoNic',
+        'timeout' => NULL,
+        'auth_mode' => NULL,
+      ),
+      'ses' =>
+      array (
+        TRANSPORT => 'ses',
+      ),
+      MAIL_GUN =>
+      array (
+        TRANSPORT => MAIL_GUN,
+      ),
+      POST_MARK =>
+      array (
+        TRANSPORT => POST_MARK,
+      ),
+      'sendmail' =>
+      array (
+        TRANSPORT => 'sendmail',
+        'path' => '/usr/sbin/sendmail -bs',
+      ),
+      'log' =>
+      array (
+        TRANSPORT => 'log',
+        'channel' => NULL,
+      ),
+      VETTORE =>
+      array (
+        TRANSPORT => VETTORE,
+      ),
+    ),
+    'from' =>
+    array (
+      'address' => 'teamup.fullstackexception@gmail.com',
+      'name' => 'TeamUp',
+    ),
+    'markdown' =>
+    array (
+      'theme' => DEF,
+      PATHS =>
+      array (
+        0 => 'C:\\xampp\\htdocs\\fullstackexception\\resources\\views/vendor/mail',
+      ),
+    ),
+  ),
+  CODA =>
+  array (
+    DEF => 'sync',
+    CONNECTIONS =>
+    array (
+      'sync' =>
+      array (
+        DRIVER => 'sync',
+      ),
+      DATA_BASE =>
+      array (
+        DRIVER => DATA_BASE,
+        TABLE => 'jobs',
+        CODA => DEF,
+        RIPROVA_DOPO => 90,
+      ),
+      'beanstalkd' =>
+      array (
+        DRIVER => 'beanstalkd',
+        'host' => 'localhost',
+        CODA => DEF,
+        RIPROVA_DOPO => 90,
+        'block_for' => 0,
+      ),
+      'sqs' =>
+      array (
+        DRIVER => 'sqs',
+        'key' => '',
+        SECRET => '',
+        PREFISSO => 'https://sqs.us-east-1.amazonaws.com/your-account-id',
+        CODA => 'your-queue-name',
+        'suffix' => NULL,
+        REGIONE => FUSO,
+      ),
+      REDIS =>
+      array (
+        DRIVER => REDIS,
+        CONNESSIONE=> DEF,
+        CODA => DEF,
+        RIPROVA_DOPO => 90,
+        'block_for' => NULL,
+      ),
+    ),
+    'failed' =>
+    array (
+      DRIVER => DATA_BASE,
+      DATA_BASE => MY_SQL,
+      TABLE => 'failed_jobs',
+    ),
+  ),
+  'services' =>
+  array (
+    MAIL_GUN =>
+    array (
+      'domain' => NULL,
+      SECRET => NULL,
+      END_POINT => 'api.mailgun.net',
+    ),
+    POST_MARK =>
+    array (
+      'token' => NULL,
+    ),
+    'ses' =>
+    array (
+      'key' => '',
+      SECRET => '',
+      REGIONE => FUSO,
+    ),
+    'github' =>
+    array (
+      'client_id' => '33de16d4d74235cbdb88',
+      'client_secret' => '754b40bd0d4b276d6dae564d637190cdca8ff0b5',
+      'redirect' => 'http://127.0.0.1:8000/login/github/callback',
+    ),
+    'google' =>
+    array (
+      'client_id' => '813888690863-ro25m717gjkah5rju2q6r1pugfshqu1g.apps.googleusercontent.com',
+      'client_secret' => '7oj6nd2hw0qjeyXlMOymWlaR',
+      'redirect' => 'http://127.0.0.1:8000/login/google/callback',
+    ),
+  ),
+  'session' =>
+  array (
+    DRIVER => 'file',
+    'lifetime' => '120',
+    'expire_on_close' => false,
+    'encrypt' => false,
+    'files' => 'C:\\xampp\\htdocs\\fullstackexception\\storage\\framework/sessions',
+    CONNESSIONE=> NULL,
+    TABLE => 'sessions',
+    'store' => NULL,
+    'lottery' =>
+    array (
+      0 => 2,
+      1 => 100,
+    ),
+    'cookie' => 'teamup_session',
+    'path' => '/',
+    'domain' => NULL,
+    'secure' => NULL,
+    'http_only' => true,
+    'same_site' => 'lax',
+  ),
+  'view' =>
+  array (
+    PATHS =>
+    array (
+      0 => 'C:\\xampp\\htdocs\\fullstackexception\\resources\\views',
+    ),
+    'compiled' => 'C:\\xampp\\htdocs\\fullstackexception\\storage\\framework\\views',
+  ),
+  'flare' =>
+  array (
+    'key' => NULL,
+    'reporting' =>
+    array (
+      'anonymize_ips' => true,
+      'collect_git_information' => false,
+      'report_queries' => true,
+      'maximum_number_of_collected_queries' => 200,
+      'report_query_bindings' => true,
+      'report_view_data' => true,
+      'grouping_type' => NULL,
+    ),
+    'send_logs_as_events' => true,
+  ),
+  'ignition' =>
+  array (
+    'editor' => 'phpstorm',
+    'theme' => 'light',
+    'enable_share_button' => true,
+    'register_commands' => false,
+    'ignored_solution_providers' =>
+    array (
+      0 => 'Facade\\Ignition\\SolutionProviders\\MissingPackageSolutionProvider',
+    ),
+    'enable_runnable_solutions' => NULL,
+    'remote_sites_path' => '',
+    'local_sites_path' => '',
+    'housekeeping_endpoint_prefix' => '_ignition',
+  ),
+  'trustedproxy' =>
+  array (
+    'proxies' => NULL,
+    'headers' => 30,
+  ),
+  'tinker' =>
+  array (
+    'commands' =>
+    array (
+    ),
+    'alias' =>
+    array (
+    ),
+    'dont_alias' =>
+    array (
+      0 => 'App\\Nova',
+    ),
+  ),
+);

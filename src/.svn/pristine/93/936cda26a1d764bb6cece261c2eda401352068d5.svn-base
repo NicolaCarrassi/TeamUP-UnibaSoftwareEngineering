@@ -1,0 +1,152 @@
+function addElementInTable() {
+    //Prendo gli elementi necessari per la modifica della tabella
+    var competenza = document.getElementById('competences');
+    var competenzaTesto = competenza.options[competenza.selectedIndex].text;
+    var livello = document.getElementById('livello');
+    var flag;
+    const notSelected= -1;
+
+
+    //controllo che il valore della competenza e del livello siano stati impostati
+    if (competenza.selectedIndex !== notSelected)
+        flag = controlloValori(competenzaTesto, livello);
+    else
+        flag = false;
+
+
+    if (!flag)
+        alert("Bisogna inserire una competenza valida con il livello");
+}
+
+
+
+/**
+ * Il metodo permette di rimuovere una riga della tabella dopo la pressione del pulsante rimuovi
+ *
+ * @param element bottone premuto per la rimozione della competenza
+ */
+function removeRow(element) {
+    var i = element.parentNode.parentNode.rowIndex;
+    var tabella = document.getElementById("lista_competenze");
+
+    if (tabella.rows.length === 2)
+        tabella.hidden = true;
+
+    tabella.deleteRow(i);
+}
+
+/**
+ * Controlla che la competenza selezionata non sia già stata inserita da parte dell'utente
+ *
+ * @param competenza la competenza che si desidera inserire
+ * @returns {boolean} true se la competenza non è stata già selezionata, false altrimenti
+ */
+function notUsed(competenza) {
+    var unused = true;
+    var tabella = document.getElementById('lista_competenze');
+    var righe = tabella.rows.length;
+    let i = 0;
+
+
+    while (unused == true && i < righe) {
+        if (competenza === tabella.rows[i].cells[0].innerHTML)
+            unused = false;
+        else
+            i++;
+    }
+    return unused;
+}
+
+
+function altreCompetenze(){
+    var input = document.getElementById('otherCompetences');
+    var inputValue =  input.value;
+    var livello = document.getElementById('livelloNewCompetences');
+    var flag;
+
+
+
+    if(inputValue !== '')
+        flag = controlloValori(inputValue, livello);
+    else
+        flag = false;
+
+    if(!flag)
+        alert("Errore nell'inserimento della competenza aggiuntiva");
+}
+
+
+
+
+
+/**
+ * La funzione effettua un controllo dei valori della competenza inserita con il relativo livello e
+ * aggiunge il livello stesso alla tabella presente nella pagina
+ *
+ * @param competenza il valore tesutale della competenza inserita
+ * @param livello elemento select html
+ *
+ * @return true se la colonna viene inserita, false altrimenti
+ */
+function controlloValori(competenza, livello){
+    const annulla = 0;
+    var flag = true;
+    var tabella = document.getElementById('lista_competenze');
+
+
+    if (livello.selectedIndex !== annulla) {
+
+        if (tabella.rows.length == 1)
+            tabella.hidden = false;
+
+
+        if (notUsed(competenza)) {
+            var newRow = tabella.insertRow(tabella.rows.length);
+            var cell1 = newRow.insertCell(0);
+            var cell2 = newRow.insertCell(1);
+            var cell3 = newRow.insertCell(2);
+            var cell4 = newRow.insertCell(3);
+
+
+            var livelloTesto = livello.options[livello.selectedIndex].text;
+            var livelloNum = levelEvauation(livelloTesto);
+
+
+            var inputNoSpaceVal = competenza.split(' ').join('_');
+            var bottoneNascosto = '<input id="' + inputNoSpaceVal + '"' + ' name="' + inputNoSpaceVal + '"' + ' type="hidden" value=' + livelloNum + '>';
+
+            newRow.setAttribute('id', tabella.rows.length);
+            newRow.setAttribute('name', tabella.rows.length);
+            cell1.setAttribute('id', competenza);
+            cell2.setAttribute('id', livelloNum);
+
+            cell1.innerHTML = competenza;
+            cell2.innerHTML = livelloTesto;
+            cell3.innerHTML = '<button type="button" class="btn btn-secondary-sm"  onclick="removeRow(this)">-</button>';
+            cell4.innerHTML = bottoneNascosto;
+        }
+    } else
+        flag = false;
+
+    return flag;
+}
+
+
+/**
+ * Assegno il valore numerico associato al livello
+ *
+ * @param livello la stringa di testo contenente il livello da valutare
+ */
+function levelEvauation(livello){
+    var res = 3;
+
+    if(livello === 'Scarsa')
+        res = 1;
+    else if(livello === 'Intermedia')
+        res = 2;
+
+    return res;
+}
+
+
+

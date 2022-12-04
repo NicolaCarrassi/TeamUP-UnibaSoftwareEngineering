@@ -1,0 +1,97 @@
+@extends('layouts.app')
+
+@section('content')
+    <div class="cc">
+        <nav class="navbar navbar-expand-lg navbar-light position-fixed">
+
+
+            <a class="navbar-brand" href="{{ url('/') }}">
+                TeamUp
+            </a>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent" >
+
+                <ul class="navbar-nav ml-auto">
+
+                    <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                        {{ $admin->email }} <span class="caret"></span>
+                    </a>
+
+
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+
+
+                        <a class="dropdown-item" href="{{ route('adminlogin') }}">
+                            {{ __('Logout') }}
+                        </a>
+
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                    </div>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div class="container-fluid">
+        <aside id="colorlib-aside" role="complementary" class="js-fullheight text-center" style="background-color: #353132; z-index: 0">
+            <img class="img-responsive" alt="Immagine profilo utente"
+                 style="width: 320px; height: 180px; margin-right: 10px;" src="{{asset('/images/app/TeamUp.png')}}">
+            <h4 class="mt-3 text-white">{{$admin->email}}</h4>
+            <div id="colorlib-main-menu" role="navigation" style="margin-top: 50px;">
+                <ul>
+                    <li><a href="{{route('adminhome',$admin->id)}}">Home</a></li>
+                    <li><a href="{{route('adminreports',$admin->id)}}">Visualizza tutte le segnalazioni</a></li>
+                    <li><a href="{{route('adminprojects',$admin->id)}}">Visualizza tutti i progetti</a></li>
+                    <li><a href="{{route('adminideas',$admin->id)}}">Visualizza tutte le idee</a></li>
+                    <li id="altro"><a href="#"><button id="altrobtn" class="btn dropdown-toggle text-white" data-toggle="dropdown" onclick="showApprovaCompetenze()"><strong>Altro</strong></button></a></li>
+                    <li class="text" id="altrecompetenze" hidden="true" style="font-size: 15px;"><a href="#">Approva altre competenze</a></li>
+                </ul>
+            </div>
+            <div class="colorlib-footer">
+                <div class="d-flex justify-content-center">
+                    <form action="#" class="colorlib-subscribe-form">
+                        <div class="form-group d-flex">
+                            <div class="icon"><span class="icon-paper-plane"></span></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </aside>
+    </div>
+@endsection
+
+@section('styles')
+
+    <style>
+        .circle:before {
+            content: ' \25CF';
+            font-size: 35px;
+            color: #f8b323;
+        }
+    </style>
+
+    <link rel="stylesheet" href="{{asset('css/sidebar/open-iconic-bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{asset('css/sidebar/animate.css')}}">
+
+    <link rel="stylesheet" href="{{asset('css/sidebar/owl.carousel.min.css')}}">
+    <link rel="stylesheet" href="{{asset('css/sidebar/owl.theme.default.min.css')}}">
+    <link rel="stylesheet" href="{{asset('css/sidebar/magnific-popup.css')}}">
+
+    <link rel="stylesheet" href="{{asset('css/sidebar/aos.css')}}">
+
+    <link rel="stylesheet" href="{{asset('css/sidebar/ionicons.min.css')}}">
+
+    <link rel="stylesheet" href="{{asset('css/sidebar/bootstrap-datepicker.css')}}">
+    <link rel="stylesheet" href="{{asset('css/sidebar/jquery.timepicker.css')}}">
+
+
+    <link rel="stylesheet" href="{{asset('css/sidebar/flaticon.css')}}">
+    <link rel="stylesheet" href="{{asset('css/sidebar/icomoon.css')}}">
+    <link rel="stylesheet" href="{{asset('css/sidebar/style.css')}}">
+    <link rel="stylesheet" href="{{asset('/css/checkboxstyle.css')}}">
+@endsection
+
+@section('scripts')
+    <script src="{{asset('/js/scriptAdmin.js')}}"></script>
+@endsection

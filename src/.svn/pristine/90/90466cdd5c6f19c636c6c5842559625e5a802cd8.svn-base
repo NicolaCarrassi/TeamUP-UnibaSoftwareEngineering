@@ -1,0 +1,38 @@
+@extends('admin.adminprofiletemp')
+
+@section('content')
+    @parent
+    <div class="col p-0" style="margin-right: 0%; margin-left: 22%; width: 76%;">
+        <div class="row" style="margin-left: 10%;">
+            <h2><strong>Nuove segnalazioni:</strong></h2>
+        </div>
+            @foreach($all_reports_users as $report_user)
+                @if(\Illuminate\Support\Facades\DB::table('report_users')->where('id',$report_user->id)->pluck('managed')->first()===0)
+                    <div class="row" style="margin-left: 10%; width: 40%;">
+                        <h3><span class="circle"></span> {{$report_user->user1_username}} ha segnalato {{$report_user->user2_username}}</h3>
+                    </div>
+                @endif
+            @endforeach
+        <div class="row">
+            <a href="{{route('adminreports',$admin->id)}}" style="margin-left: 11%;"><button class="btn btn-primary" style="color: #ffffff; background-color: #f8b323; border-color: #f8b323;">
+                Mostra tutti
+            </button></a>
+        </div>
+        <div class="row" style="margin-top: 20%; height: 20%; background-color: #353132; width: 80%; margin-right: 0%; margin-left: 10%;">
+            <h1 style="color:#ffffff; font-size: 70px; margin-left: 10%; margin-top: 2%;">Ultime idee progettuali inserite</h1>
+        </div>
+            @foreach($all_idea as $idea)
+                <div class="row" style="margin-left: 10%; width: 40%;">
+                    <h3><span class="circle"></span> Idea n.{{$idea->id}}: {{$idea->name}}</h3>
+                </div>
+            @endforeach
+        <div class="row">
+            <a href="{{route('adminideas',$admin->id)}}" style="margin-left: 11%;"><button class="btn" style="color: #ffffff; background-color: #f8b323; border-color: #f8b323;">
+                    Mostra tutti
+                </button></a>
+        </div>
+@endsection
+
+@section('scripts')
+    <script src="{{asset('/js/scriptAdmin.js')}}"></script>
+@endsection

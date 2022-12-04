@@ -1,0 +1,61 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class FooterController extends Controller{
+
+    /**
+     * Il metodo permette di essere reindirizzati una volta connessi al sito,
+     * la pagina è la home in caso l'utente sia autenticato al sistema, altrimenti essa è
+     * la pagina chiamata welcome (la landingPage del sito per utenti non autenticati o non iscritti)
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function welcomePage(){
+        if(Auth::user() !== null) {
+            $report_end = DB::table('users')->where('id',auth()->user()->getAuthIdentifier())->pluck('report_end')->first();
+            $datediff_report = DB::select('select datediff("'.now()->toDateString().'","'.$report_end.'") as datediff_report from users where id='.auth()->user()->getAuthIdentifierName().';');
+
+            return view('home',[
+                'datediff_report' => $datediff_report[0]->datediff_report,
+                'is_banned' => false
+            ]);
+        }
+        return view('welcome');
+    }
+
+    /**
+     * Il metodo permette di fornire la vista della pagina chi siamo
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function chiSiamo(){
+        return view('footerElements.chiSiamo');
+    }
+
+
+    /**
+     * Il metodo permette di fornire la vista della pagina dei termini d'utilizzo
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function terms(){
+        return view('footerElements.terms');
+    }
+
+
+    /**
+     * Il metodo permette di fornire la vista della pagina delle regole della piattaforma
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function regole(){
+        return view('footerElements.regole');
+    }
+
+
+}

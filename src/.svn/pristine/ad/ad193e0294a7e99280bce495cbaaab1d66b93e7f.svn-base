@@ -1,0 +1,105 @@
+@extends('layouts.app')
+<!-- Pagina che estende app, rappresenta la pagina che viene visualizzata dall'utente non registrato o non autenticato -->
+@section('content')
+    <header class="masthead text-white text-center" style="background:url({{asset('/images/app/bg.jpg')}})no-repeat center center;background-size:cover;">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-9 mx-auto">
+                    <br>
+                    <h1 class="mb-5" style="color: white">Non abbandonare la tua intuizione<br>Realizzala con TeamUp</h1>
+                </div>
+                <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
+                    <form method="get" action="{{route('register')}}">
+                        <div class="form-row mt-lg-5">
+                            <div class="col"><button class="btn btn-secondary btn-block btn-lg" type="submit" style="background:black ;color: #f8b323">Entra nella community!</button></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+    <section class="features-icons bg-light text-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                        <div class="d-flex features-icons-icon"><i class="icon-people m-auto text-primary" data-bs-hover-animate="pulse"></i></div>
+                        <h3>Collaborazione</h3>
+                        <p class="lead mb-0">Collabora con persone con i tuoi stessi interessi e realizzate un progetto unico</p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                        <div class="d-flex features-icons-icon"><img src="{{asset('/images/app/logo.png')}}" width="350" height="250" alt="Logo"></div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="mx-auto features-icons-item mb-5 mb-lg-0 mb-lg-3">
+                        <div class="d-flex features-icons-icon"><i class="icon-control-forward m-auto text-primary" data-bs-hover-animate="pulse"></i></div>
+                        <h3>Accelera il processo</h3>
+                        <p class="lead mb-0">Realizza i tuoi progetti in un tempo minore<br><br></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br><br><br>
+    </section>
+
+    <section class="showcase">
+        <div class="container-fluid p-0">
+            <div class="row no-gutters">
+                <div class="col-lg-6 order-lg-2 text-white showcase-img" style="background-image:url({{asset('images/app/Team.png')}});"><span></span></div>
+                <div class="col-lg-6 my-auto order-lg-1 showcase-text">
+                    <h2>Promuovi la tua idea</h2>
+                    <p class="lead mb-0">Grazie a TeamUp è possibile realizzare quel progetto che hai sempre sognato ma non hai mai realizzato perchè non hai mai trovato le persone con cui realizzarla</p>
+                </div>
+            </div>
+            <div class="row no-gutters">
+                <div class="col-lg-6 text-white showcase-img" style="background-image:url({{asset('/images/app/collaborazione.jpg')}});"><span></span></div>
+                <div class="col-lg-6 my-auto order-lg-1 showcase-text">
+                    <h2>Collabora con altri utenti</h2>
+                    <p class="lead mb-0">Partecipa ai progetti di altri e collabora con loro per realizzare il progetto dei loro sogni</p>
+                </div>
+            </div>
+            <div class="row no-gutters">
+                <div class="col-lg-6 order-lg-2 text-white showcase-img" style="background-image:url({{asset('/images/app/free.png')}}); height: 600px"><span></span></div>
+                <div class="col-lg-6 my-auto order-lg-1 showcase-text">
+                    <h2>Completamente gratuito</h2>
+                    <p class="lead mb-0">TeamUp è completamente gratuito, non avrai limitazioni sulla creazione di progetti e sulla partecipazione a quelli degli altri</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="testimonials text-center bg-light">
+        <div class="container">
+            <h2 class="mb-5"><a href="{{route('chiSiamo')}}" style="color: black"> Chi siamo...</a></h2>
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="mx-auto testimonial-item mb-5 mb-lg-0"><img class="rounded-circle img-fluid mb-3" src="{{asset('/images/app/leonardoGalluzzi.jpg')}}" style="max-height: 300px; max-width:300px;" alt="Leonardo Galluzzi">
+                        <h5>Leonardo Galluzzi</h5>
+                        <p class="font-weight-light mb-0"></p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="mx-auto testimonial-item mb-5 mb-lg-0"><img class="rounded-circle img-fluid mb-3" src="{{asset('/images/app/micheleDiCarlo.jpg')}}" style="max-height: 300px; max-width:300px;" alt="Michele Ciro Di Carlo">
+                        <h5>Michele Ciro Di Carlo</h5>
+                        <p class="font-weight-light mb-0"></p>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="mx-auto testimonial-item mb-5 mb-lg-0"><img class="rounded-circle img-fluid mb-3" src="{{asset('/images/app/nicolaCarrassi.jpg')}}" style="max-height: 300px; max-width:300px;" alt="Nicola Carrassi">
+                        <h5>Nicola Carrassi</h5>
+                        <p class="font-weight-light mb-0"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+@endsection
+
+
+@section('styles')
+    <link rel="stylesheet" href="{{asset('css/simple-line-icons.min.css')}}">
+@endsection
+

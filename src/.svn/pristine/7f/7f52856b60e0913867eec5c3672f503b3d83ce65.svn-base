@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class HomeController extends Controller{
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function index()
+    {
+        //$report_end = DB::select('select report_end from users where id='.auth()->user()->getAuthIdentifierName().';');
+        /*$report_end = DB::table('users')->where('report_end',auth()->user()->getAuthIdentifierName())->pluck()->first();
+        dd($report_end);
+
+
+        $user_is_enabled = DB::select('select datediff("'.$report_end.'","'.now()->toDateString().'") from users where id='.auth()->user()->getAuthIdentifierName().';');*/
+
+        return view('home');
+    }
+}

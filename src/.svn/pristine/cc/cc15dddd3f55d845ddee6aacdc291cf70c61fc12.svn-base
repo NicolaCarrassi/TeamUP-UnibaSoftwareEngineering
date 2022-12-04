@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class ProfilesController extends Controller{
+
+
+    /**
+     * Il metodo permette di visualizzare il profilo di un utente
+     *
+     * @param $user int id dell'utente di cui si vuole visualizzare il profilo
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function index($user){
+        $user = User::findOrFail($user);
+
+        $competenze = DB::select('select competence,level from ((competences inner join skills on competences.id=skills.competence_id) inner  join
+            users on users.id=skills.user_id) where user_id='.$user->id.';');
+        return view('profileview/profilo',[
+            'user' => $user,
+            'competenze' => $competenze
+        ]);
+    }
+}

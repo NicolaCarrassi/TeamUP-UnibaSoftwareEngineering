@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Http\Controllers\admin;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
+
+class AdminController extends AbstractAdminController {
+
+    public function showAllReports($admin) {
+
+        $all_reports_projects = $this->getProgetti(-1);
+        $all_reports_users = $this->getSegnalazioni(-1);
+
+        return view('admin.adminsegnalazioni',[
+            'admin' => $this->getAdmin($admin),
+            'all_reports_users' => $all_reports_users
+        ]);
+    }
+
+    public function showAllIdeas($admin) {
+
+        $all_ideas = $this->getIdee(-1);
+
+        return view('admin.adminidee',[
+            'admin' => $this->getAdmin($admin),
+            'all_ideas' => $all_ideas
+        ]);
+    }
+
+    public function acceptReport($report,$id_report) {
+
+        $all_reports_users = $this->getSegnalazioni(-1);
+
+        foreach ($all_reports_users as $user_report) {
+            if($user_report->id==$id_report) {
+                DB::update('update report_users set managed=' . $report . ' where id=' . $id_report . ';');
+                return redirect()->back();
+            }
+        }
+    }
+
+}

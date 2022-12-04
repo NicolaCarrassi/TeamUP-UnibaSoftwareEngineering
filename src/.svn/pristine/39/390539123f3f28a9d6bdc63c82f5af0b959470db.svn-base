@@ -1,0 +1,84 @@
+<?php
+
+namespace App\Http\Controllers\admin;
+
+use App\Admins;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
+use \Illuminate\Foundation\Auth\AuthenticatesUsers;
+use App\Http\Controllers\Controller;
+
+class AdminLoginController extends AbstractAdminController
+{
+    const EMAIL = 'email';
+    const PASSWORD = 'password';
+
+    public function showLoginAdmin() {
+        return view('auth.adminlogin');
+    }
+
+    public function showRegisterAdmin() {
+        return view('auth.adminregister');
+    }
+
+    public function registerAdmin(Request $request) {
+
+        $request->validate(
+            [   'email' => 'required | email | unique:admins',
+                self::PASSWORD => 'required | string | min:8 | confirmed']
+        );
+
+        $email = $request->input('email');
+        $password = Hash::make($request->input(self::PASSWORD));
+
+        Admins::create([
+            'email' => $email,
+            self::PASSWORD => $password
+        ]);
+    }
+
+    public function loginAdmin(Request $request) {
+
+
+        $all_password = DB::select('select password from admins;');
+        $password_is_present = false;
+
+        $email = $request->input(self::EMAIL);
+        $password = $request->input(self::PASSWORD);
+
+        foreach($all_password as $passwords) {
+            if(Hash::check($password,$passwords->password)) {
+                $password_is_present = true;
+            }
+        }
+
+        if($password_is_present===true) {
+            $request->validate([
+                'email' => 'required | '.self::EMAIL.'| exists:admins,'.self::EMAIL]);
+        } else {
+            $validator = $request->validate([
+                'email' => 'required | '.self::EMAIL.' | max:0']);
+        }
+
+        $admin = Admins::where(self::EMAIL,$email)->first();
+
+        return redirect()->route('adminhome',$admin->id);
+    }
+
+    public function home($idadmin) {
+
+        $all_reports_projects = $this->getProgettiSegnalati(2);
+        $all_reports_users = $this->getUtentiSegnalati(2);
+        $all_idea = $this->getIdee(2);
+        $admin = $this->getAdmin($idadmin);
+
+        return view('admin.adminhome', [
+            'admin' => $admin,
+            'all_reports_users' => $all_reports_users,
+            'all_reports_projects' => $all_reports_projects,
+            'all_idea' => $all_idea
+        ]);
+    }
+}

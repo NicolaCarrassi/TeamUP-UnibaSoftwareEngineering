@@ -1,0 +1,38 @@
+@extends('admin.adminprofiletemp')
+
+@section('content')
+@parent
+<div class="col" style="margin-left: 21.2%; width: 78%;">
+    <div class="container-fluid">
+        <div class="row" style="height: 100%;">
+            <div class="col mx-auto bg-white rounded shadow">
+                <div class="table-responsive">
+                    <table id="allprojects" class="table table-fixed">
+                        <caption class="p-0"></caption>
+                        <tbody>
+                        @foreach($competenze as $competenza)
+                            <tr>
+                                <th scope="row" class="col-2">
+                                    {{$competenza->competence}}
+                                    <div id="description_projects{{$competenza->id}}" class="row" hidden="true" style="margin-left: 0%; width: 90%;">
+                                        <div class="row" style="margin-top: 6%; margin-left: 80%;">
+                                            <input id="hidden_{{$competenza->id}}" value="{{$competenza->id}}" type="text" hidden="true">
+                                            <a><button class="btn-success" id="accetta_competenza" name="accetta_comp_button" type="button">Approva</button></a>
+                                            <a><button class="btn-danger ml-3" id="rifiuta_competenza" name="rifiuta_comp_button" type="button">Rimuovi</button></a>
+                                        </div>
+                                    </div>
+                                </th>
+                                <th scope="row" class="col-2">
+                                    <button id="showdescbtn_projects{{$competenza->id}}" class="btn" onclick="showDescription(-1,{{$competenza->id}})" style="font-size: 18px;">+</button>
+                                </th>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@endsection

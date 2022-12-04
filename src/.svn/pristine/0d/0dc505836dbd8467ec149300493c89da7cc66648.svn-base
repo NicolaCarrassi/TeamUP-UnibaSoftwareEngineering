@@ -1,0 +1,37 @@
+<div id="visualizzaTuttiPartecipanti" class="modal fade" tabindex="-1" role="dialog" style="margin-top: 5%;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="teamHeader" class="modal-title">Membri del team</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="overflow-x: hidden; overflow-y: auto; max-height: 400px;">
+                <table id="membri_team" name="membri_team">
+                    <caption>Membri team</caption>
+                    <tr>
+                        <td><p class="text-dark" style="font-size: 16px;"><strong>Username</strong></p></td>
+                        <td><p class="text-dark" style="font-size: 16px;"><strong>Nominativo</strong></p></td>
+                    </tr>
+                    <tr>
+                        <td><p class="text-dark" style="font-size: 16px;"><strong>{{$progetto->leader_id['leader_username']}}</strong></p></td>
+                        <td><p class="text-dark" style="font-size: 16px;"><strong>{{$progetto->leader_id['leader_name']}}</strong></p></td>
+                        <td><p class="text-dark" style="font-size: 16px;"><strong><a href="/profile/{{$progetto->leader_id['leader_id']}}">Visualizza Profilo</a></strong></p></td>
+                    </tr>
+                    @foreach($teammates as $teammate)
+                        <tr>
+                            <td><p class="text-dark" style="font-size: 16px;"><strong>{{$teammate->username}}</strong></p></td>
+                            <td><p class="text-dark" style="font-size: 16px;"><strong>{{$teammate->name}}</strong></p></td>
+                            <td><p class="text-dark" style="font-size: 16px;"><strong><a href="/profile/{{$teammate->id}}">Visualizza Profilo</a></strong></p></td>
+                        </tr>
+                    @endforeach
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Esci</button>
+            </div>
+        </div>
+    </div>
+</div>
+

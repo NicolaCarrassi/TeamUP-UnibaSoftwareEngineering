@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class ProfilesController extends Controller
+{
+    public function index($user)
+    {
+        $user = User::find($user);
+        $competenze = DB::select('select competence,level from ((competences inner join skills on competences.id=skills.competence_id) inner  join
+            users on users.id=skills.user_id) where user_id='.$user->id.';');
+        return view('profileview/profilo',[
+            'user' => $user,
+            'competenze' => $competenze
+        ]);
+    }
+}

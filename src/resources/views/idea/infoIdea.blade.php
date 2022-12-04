@@ -1,0 +1,57 @@
+@extends('idea.riepilogativePageTemplate')
+
+@section('content')
+    @parent
+    <div class="col"  style="margin-left: 25%; width: 70%;">
+        <div class="row">
+            <h1><strong>Pagina Riepilogativa</strong></h1>
+        </div>
+        <div class="row" style="margin-top: 5%;">
+            <p class="text-dark" style="font-size: 20px;">Nome Idea: <strong><br>{{$progetto->name}}</strong></p>
+            <p class="text-dark" style="font-size: 20px; margin-left: 5%;">Categoria: <strong><br>{{$progetto->category_id}}</strong></p>
+            @if($progetto->needToMeet == 1)
+                <p class="text-dark" style="font-size: 20px; margin-left: 5%;">Necessità di Incontro: <strong><br>Sì</strong></p>
+                <p class="text-dark" style="font-size: 20px; margin-left: 5%;">Città: <strong><br>{{$progetto->city}}</strong></p>
+            @else
+                <p class="text-dark" style="font-size: 20px; margin-left: 5%;">Necessità di Incontro: <strong><br>No</strong></p>
+            @endif
+            <p class="text-dark" style="font-size: 20px; margin-left: 5%;">Data Proposta Idea:<strong><br>{{substr($progetto->idea_proposal_at, 0, strlen($progetto->idea_proposal_at)-8)}}</strong></p>
+        </div>
+        <div class="col-lg-12" style="margin-top: 1%;">
+            <p class="text-dark" style="font-size: 20px;
+                        width: 90%;
+                        word-wrap: break-word;">Descrizione: <strong><br>{{$progetto->description}}</strong></p>
+        </div>
+        <div class="row" style="width: 30%; margin-top: 1%;">
+            <p class="text-dark" style="font-size: 20px;">Competenze:</p>
+            <table class="table table-bordered" id="competenze_richieste" name="competenze_richieste">
+                <caption>Competenze richieste idea</caption>
+                <thead>
+                <tr>
+                    <th scope="col">Competenza</th>
+                    <th scope="col">Livello</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($competenze_richieste as $competenza)
+                    <tr>
+                        <td>{{$competenza->competence}}</td>
+                        <td>{{$competenza->level}}</td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        @cannot('report', $progetto)
+         <div class="fb-share-button mb-3" data-href="https://127.0.0.1:8000/idea/{{$progetto->id}}" data-layout="button" data-size="large"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2F127.0.0.1%3A8000%2F&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore" rel="noopener noreferrer">Condividi</a></div>
+        @endcannot
+
+        @can('update',$progetto)
+            @if($progetto->sponsored === 0)
+                <p class="mt-4">Sponsorizza la tua idea</p>
+                <div id="paypal-button-container" style="width: 50px"></div>
+            @endif
+        @endcan
+    </div>
+@endsection

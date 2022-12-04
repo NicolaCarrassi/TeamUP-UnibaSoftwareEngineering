@@ -1,0 +1,57 @@
+window.addEventListener("load", function() {
+    let navbar = document.getElementById('navbar').hidden = true;
+    let ban = document.getElementById('ban').value = false;
+    /*let userimg = document.getElementById('userimg').hidden = true;
+    let seeprofile = document.getElementById('seeprofile').hidden = true;
+    let chat = document.getElementById('chat').hidden = true;
+    let navbardivider = document.getElementById('navbardivider').hidden = true;
+    let newidea = document.getElementById('newidea').hidden = true;
+    let rightchat = document.getElementById('rightchat').hidden = true;
+    let searchidea = document.getElementById('searchidea').hidden = true;
+    let navbarDropdown = document.getElementById('navbarDropdown').hidden = document.getElementById('adminemail').innerText;*/
+
+});
+
+function showDescription(report_users_id,report_projects_id) {
+    if(report_projects_id===-1) {
+        let showdescbtn_user = document.getElementById('showdescbtn_user' + report_users_id);
+        let description_user = document.getElementById('description_user' + report_users_id);
+
+        if(description_user.hidden===true) {
+            showdescbtn_user.innerText = "-";
+            description_user.hidden = false;
+        } else {
+            showdescbtn_user.innerText = "+";
+            description_user.hidden = true;
+        }
+    }
+
+    if(report_users_id===-1) {
+        let showdescbtn_projects = document.getElementById('showdescbtn_projects' + report_projects_id,);
+        let description_projects = document.getElementById('description_projects' + report_projects_id,);
+
+        if (description_projects.hidden === true) {
+            showdescbtn_projects.innerText = "-";
+            description_projects.hidden = false;
+        } else {
+            showdescbtn_projects.innerText = "+";
+            description_projects.hidden = true;
+        }
+    }
+}
+
+function showApprovaCompetenze() {
+    let altrecompetenze = document.getElementById('altrecompetenze');
+    altrecompetenze.hidden=!altrecompetenze.hidden;
+}
+
+function banUser() {
+    let closedatediv = document.getElementById('closedateid');
+    let closedate = document.getElementById('closedate');
+    let ban = document.getElementById('ban');
+
+    closedatediv.hidden = !closedatediv.hidden;
+    closedate.disabled = !closedate.disabled;
+    ban.value = closedatediv.hidden;
+}
+

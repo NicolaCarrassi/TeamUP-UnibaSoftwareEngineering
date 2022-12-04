@@ -1,0 +1,40 @@
+@extends('admin.adminprofiletemp')
+
+@section('content')
+    @parent
+
+    <div class="col" style="margin-left: 21.2%; width: 78%;">
+        <div class="container-fluid">
+            <div class="row" style="height: 100%;">
+                <div class="col mx-auto bg-white rounded shadow">
+                    <div class="table-responsive">
+                        <table id="allprojects" class="table table-fixed">
+                            <caption></caption>
+                            <tbody>
+                            @foreach($all_ideas as $ideas)
+                                <tr>
+                                    <th scope="row" class="col-2">
+                                        {{$ideas->name}}
+                                        <div id="description{{$ideas->id}}" class="row" hidden="true" style="margin-left: 0%; width: 80%;">
+                                            <br>Descrizione:<br>
+                                            {{$ideas->description}}
+                                        </div>
+                                    </th>
+                                    <th scope="row" class="col-2">
+                                        <button id="showdescbtn{{$ideas->id}}" class="btn" onclick="showDescription({{$ideas->id}})" style="font-size: 18px;">+</button>
+                                    </th>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div><!-- End -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@section('scripts')
+    <script src="{{asset('/js/scriptAdmin.js')}}"></script>
+@endsection

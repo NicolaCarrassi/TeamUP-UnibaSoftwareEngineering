@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\User;
+
+class StoricoProgController extends Controller{
+
+
+    /**
+     * La funzione permette di caricare la schermata dello storico dei progetti di un utente
+     *
+     * @param $user int identificativo dell'utente di cui si vuole trovare lo storico
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function showStoricoProg($user) {
+        return view('storicoprog.storicoprog',['user' => User::findOrFail($user)]);
+    }
+}

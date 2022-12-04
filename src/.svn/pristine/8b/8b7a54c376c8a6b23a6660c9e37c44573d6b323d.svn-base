@@ -1,0 +1,70 @@
+@extends('layouts.app')
+
+
+@section('content')
+<div class="team-grid">
+    <div class="container" style="margin-top: -30px;">
+        <div class="intro">
+            <h2 class="text-center"
+                style="background-color: black;padding-bottom: 40px;color: #f8b323 ;font-family: Roboto, sans-serif;font-weight: bold;">
+                Il nostro team </h2>
+        </div>
+        <div class="row people justify-content-center">
+            <div class="col-ml-8 col-lg-3 item" data-aos="fade-right" data-aos-duration="850">
+                <div class="box" style="background-image: url({{asset('/images/app/leonardoGalluzzi.jpg')}});">
+                    <div class="cover">
+                        <h3 class="name">Leonardo Galluzzi</h3>
+                        <p class="title">Developer</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-ml-8 col-lg-3 item" data-aos="fade-down" data-aos-duration="850">
+                <div class="box" style="background-image: url({{asset('/images/app/micheleDiCarlo.jpg')}});">
+                    <div class="cover">
+                        <h3 class="name">Michele Ciro Di Carlo</h3>
+                        <p class="title">Developer</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-ml-8 col-lg-3 item" data-aos="fade-up" data-aos-duration="850">
+                <div class="box" style="background-image: url({{asset('/images/app/nicolaCarrassi.jpg')}});">
+                    <div class="cover">
+                        <h3 class="name">Nicola Carrassi</h3>
+                        <p class="title">Developer</p>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="text-center mt-3">
+            <br><br>
+            <div class="container" style="margin-top: 70px;">
+                <div class="intro">
+                    <h2 class="text-center"
+                        style="background-color: black;padding-bottom: 40px;color: #f8b323 ;font-family: Roboto, sans-serif;font-weight: bold;">
+                        I nostri obiettivi</h2>
+                </div>
+                <br><br>
+                <div class="row">
+                    <div class="col">
+                        <h1 class="text-center" style="font-size: 24px;">fullStackException è gruppo di giovani studenti che hanno
+                            voluto mettersi alla prova creando una piattaforma che permettesse un'interazione diversa dal
+                            solito. Il tutto è nato nel 2020. <br>Il nostro obiettivo è quella di unire le persone creando una piattaforma
+                            che permettesse di creare amicizie
+                            e legami indipendentemente dal background sociale e dalla distanza. Cerchiamo di metterci in
+                            competizione con tutte quelle piattaforme che offrono sharing di risorse personali. Crediamo che
+                            le nuove tecnologie debbano aiutare nell'interazione
+                            tra persone e infatti crediamo che l'interazione che la nostra piattaforma offre ai propri
+                            utenti favorisca la socializzazione fra persone eterogenee con interessi in comune.<br>
+                            Puntiamo a promuovere non solo la collaborazione fra persone, veicolando essa dalla creazione e realizzazione
+                            di progetti proposti da persone con interessi in comune, fornendo ad essi un mezzo che agevoli la condivisione di
+                            idee e progetti&nbsp;<br><br><br></h1>
+                    </div>
+                </div>
+        </div>
+@endsection
+
+@section('styles')
+<link rel="stylesheet" href="{{asset('css/styles.min.css')}}">
+
+
+@endsection

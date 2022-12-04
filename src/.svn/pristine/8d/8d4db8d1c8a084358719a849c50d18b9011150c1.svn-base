@@ -1,0 +1,115 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Competence;
+use App\Skill;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class ModProfileController extends Controller
+{
+    public function modprofile() {
+        $user = Auth::user();
+        $usercomp= DB::select('select competence,skills.id,level from ((competences inner join skills on competences.id=skills.competence_id) inner  join
+users on users.id=skills.user_id) where user_id='.$user->id.';');
+        $competenze = Competence::all();
+        return view('profileview.modprofilo',[
+            'user' => $user,
+            'usercomp'=> $usercomp,
+            'allcompetenze' => $competenze
+        ]);
+    }
+
+    public function confermamodifica(Request $request) {
+
+        $user = Auth::user();
+        $numcomp = DB::table('skills')->where('user_id',$user->id)->count();
+
+        $validator = $request->validate(
+            [   'username' => 'required|unique:users',
+                'email' => 'required|email|unique:users']
+        );
+
+        $username = $request->input('username');
+        $email = $request->input('email');
+        //$info = $request->input('info');
+
+        //dd($numcomp);
+        if($numcomp>1)
+            DB::delete('delete from skills where user_id='.$user->id.';');
+
+        foreach ($request->keys() as $key) {
+            if($this->controlValue($key)) {
+                $competence= $this->getCompetenza($key);
+                Skill::create([
+                    'user_id' => $user->id,
+                    'competence_id' => $competence,
+                    'level' => $request->input($key)
+                ]);
+            }
+        }
+
+        $user->username = $username;
+        $user->email = $email;
+        //$user->info = $info;
+        $user->save();
+
+        return redirect()->route('profile',$user->id);
+    }
+
+    public function removeComp(Request $request) {
+        $user = Auth::user();
+        $id = array_key_first($request->toArray());
+        $numcomp = DB::table('skills')->where('user_id',$user->id)->count();
+
+        if($numcomp>1)
+            DB::delete('delete from skills where id='.$id.';');
+
+        return redirect()->back();
+    }
+
+    public function cancellaProfilo() {
+        $user = Auth::user();
+
+        DB::delete('delete from users where id='.$user->id.';');
+
+        return redirect()->route('home');
+    }
+
+    /**
+     * Controlla che una keyword sia diversa da quelle riservate ai dati personali dell'utente,
+     * quindi essa è una competenza
+     *
+     * @param $element la chiave di cui si vuole conoscere se differisce dai token riservati
+     * @return bool true se diverso (quindi rappresenta una competenza), false altrimenti
+     *
+     */
+    private  function controlValue($element){
+        $banned_keywords = ['_token', 'username', 'name', 'image', 'surname', 'birth_date', 'city', 'email', 'password', 'password_confirmation', 'competences','otherCompetences'];
+        $flag = true;
+
+        foreach ($banned_keywords as $prova) {
+            if ($prova === $element) {
+                $flag = false;
+                break;
+            }
+        }
+        return $flag;
+    }
+
+    /**
+     * Ricerca l'id della competenza passata in input, formattandola come nel db
+     *
+     * @param $key valore della keyword da convertire
+     *
+     */
+    private function getCompetenza($key) {
+        $competenza = str_replace('_', ' ', $key);
+
+        $id = Competence::firstOrCreate(['competence' => $competenza]);
+
+        return $id->id;
+    }
+}

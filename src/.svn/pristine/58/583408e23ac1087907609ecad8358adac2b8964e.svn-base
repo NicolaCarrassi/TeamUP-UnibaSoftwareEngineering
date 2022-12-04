@@ -1,0 +1,70 @@
+function showDescription(report_users_id,report_projects_id,competence_id) {
+
+    let deletebtn = document.getElementById('delete_button' + report_projects_id);
+
+    if(deletebtn!==null)
+        deletebtn.hidden = !deletebtn.hidden;
+
+    if(report_users_id===-1 && report_projects_id===-1) {
+        let showdescbtn_competence = document.getElementById('showdescbtn_competence' + competence_id);
+        let description_competence = document.getElementById('description_competence' + competence_id);
+
+        if (showdescbtn_competence !== null && description_competence !== null) {
+            if (description_competence.hidden === true) {
+                showdescbtn_competence.innerText = "-";
+                description_competence.hidden = false;
+            } else {
+                showdescbtn_competence.innerText = "+";
+                description_competence.hidden = true;
+            }
+        }
+    }
+
+    if (report_projects_id === -1) {
+        let showdescbtn_user = document.getElementById('showdescbtn_user' + report_users_id);
+        let description_user = document.getElementById('description_user' + report_users_id);
+
+        if (showdescbtn_user !== null && description_user !== null) {
+            if (description_user.hidden === true) {
+                showdescbtn_user.innerText = "-";
+                description_user.hidden = false;
+            } else {
+                showdescbtn_user.innerText = "+";
+                description_user.hidden = true;
+            }
+        }
+    }
+
+    if (report_users_id === -1) {
+        let showdescbtn_projects = document.getElementById('showdescbtn_projects' + report_projects_id);
+        let description_projects = document.getElementById('description_projects' + report_projects_id);
+
+        if (showdescbtn_projects !== null && description_projects !== null) {
+            if (description_projects.hidden === true) {
+                showdescbtn_projects.innerText = "-";
+                description_projects.hidden = false;
+            } else {
+                showdescbtn_projects.innerText = "+";
+                description_projects.hidden = true;
+            }
+        }
+    }
+
+
+}
+
+function showApprovaCompetenze() {
+    let altrecompetenze = document.getElementById('altrecompetenze');
+    altrecompetenze.hidden=!altrecompetenze.hidden;
+}
+
+function banUser() {
+    let closedatediv = document.getElementById('closedateid');
+    let closedate = document.getElementById('closedate');
+    let ban = document.getElementById('ban');
+
+    closedatediv.hidden = !closedatediv.hidden;
+    closedate.disabled = !closedate.disabled;
+    ban.value = closedatediv.hidden;
+}
+

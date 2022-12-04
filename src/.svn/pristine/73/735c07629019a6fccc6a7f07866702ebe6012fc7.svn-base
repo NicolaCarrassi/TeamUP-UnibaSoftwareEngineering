@@ -1,0 +1,57 @@
+<?php
+
+namespace App\Http\Controllers\admin;
+
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
+
+class AdminController extends AbstractAdminController {
+
+    const CLOSEDATE = 'closedate';
+
+    public function showAllReports($admin) {
+
+        //$all_reports_projects = $this->getProgetti(-1);
+        $all_reports_users = $this->getSegnalazioni(-1);
+
+        return view('admin.adminsegnalazioni',[
+            'admin' => $this->getAdmin($admin),
+            'all_reports_users' => $all_reports_users
+        ]);
+    }
+
+    public function showAllIdeas($admin) {
+
+        $all_ideas = $this->getIdee(-1);
+
+        return view('admin.adminidee',[
+            'admin' => $this->getAdmin($admin),
+            'all_ideas' => $all_ideas
+        ]);
+    }
+
+    public function acceptReport(Request $request,$report) {
+
+        $data = $request->input(self::CLOSEDATE);
+        $hiddenid_report = $request->input('hiddenid_report');
+        $hiddenid_user_reported = $request->input('hiddenid_user_reported');
+
+        $now = now()->toDateString();
+
+        $request->validate([
+            self::CLOSEDATE => 'required | date | after_or_equal: '.$now,
+        ]);
+
+        auth()->
+
+        DB::update('update report_users set managed='.$report.' where id='.$hiddenid_report.';');
+        DB::update('update report_users set closed_at=timestamp("'.$data.'") where id='.$hiddenid_report.';');
+        DB::update('update users set report_end=timestamp("'.$data.'") where id='.$hiddenid_user_reported.';');
+
+        return redirect()->back();
+
+    }
+
+}

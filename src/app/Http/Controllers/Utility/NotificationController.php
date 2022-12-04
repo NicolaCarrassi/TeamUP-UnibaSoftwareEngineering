@@ -1,0 +1,113 @@
+<?php
+
+namespace App\Http\Controllers\Utility;
+
+use App\Http\Controllers\Controller;
+use App\Mail\AbandonProjectMail;
+use App\Mail\EndProjectMail;
+use App\Mail\NewLeaderMail;
+use App\Mail\PartecipationRequestMail;
+use App\Mail\LeaderRemovesTeammateMail;
+use App\Mail\ProjectStartMail;
+use App\Mail\SanctionSendMail;
+use App\Mail\TaskGivenMail;
+use App\Mail\TeamAcceptanceMail;
+use Illuminate\Support\Facades\Mail;
+
+
+/**
+ * Class NotificationController
+ *
+ * La classe permette di effettuare l'invio delle notifiche in seguito ad eventi, per tanto
+ * essa centralizza l'invio di email attraverso l'ausilio di un metodo statico
+ *
+ * @package App\Http\Controllers\utility
+ *
+ */
+class NotificationController extends Controller{
+
+    // costanti necessarie per fornire una maggiore leggibilità al codice
+    const EMAIL = 'email';
+    const TEAMMATE = 'nomeTeammate';
+    const LEADER = 'nomeLeader';
+    const USER = 'nomeUtente';
+    const PROJECT = 'nomeProgetto';
+    const IDEA = 'nomeIdea';
+    const COMPITO = 'compitoAssegnato';
+    const SANZIONE = 'motivoSanzione';
+
+
+
+    // costanti  necessarie come parametri dagli altri moduli dell'applicativo nel momento di invio di mail
+    const ABBANDONO_PROGETTO = 'abbandono_progetto';
+    const ACCETTAZIONE_TEAM = 'accettazione_team';
+    const ASSEGNO_COMPITO = 'assegno_compito';
+    const AVVIO_PROGETTO = 'avvio_progetto';
+    const INVIO_SANZIONE = 'invio_sanzione';
+    const RICHIESTA_PARTECIPAZIONE = 'richiesta partecipazione';
+    const RIMOZIONE_PROGETTO = 'rimozione_progetto';
+    const TERMINE_PROGETTO = 'termine_progetto';
+    const NEW_LEADER = 'nuovo_leader';
+
+
+    /**
+     * Il metodo permette di inviare una mail attraverso il controller comune a tutti i metodi
+     * In questo modo viene resa semplice l'aggiunta di nuove eventuali mail o la rimozione di esse, in quanto vi è un metodo comune a tutte esse
+     *
+     * @param $string string la costante necessaria per l'invio della mail necessaria
+     * @param $array array di dati da passare alla mail per la generazione di essa.
+     */
+    public static function mailSend($string, $array){
+        switch ($string){
+
+            case self::ABBANDONO_PROGETTO:
+                Mail::to($array[self::EMAIL])->send(new AbandonProjectMail($array[self::LEADER], $array[self::TEAMMATE], $array[self::PROJECT]));
+                break;
+
+            case self::ACCETTAZIONE_TEAM :
+                Mail::to($array[self::EMAIL])->send(new TeamAcceptanceMail($array[self::TEAMMATE], $array[self::IDEA]));
+                break;
+
+            case self::ASSEGNO_COMPITO :
+                Mail::to($array[self::EMAIL])->send(new TaskGivenMail($array[self::TEAMMATE], $array[self::LEADER], $array[self::PROJECT], $array[self::COMPITO]));
+                break;
+
+            case self::AVVIO_PROGETTO :
+                Mail::to($array[self::EMAIL])->send(new ProjectStartMail($array[self::TEAMMATE], $array[self::PROJECT]));
+                break;
+
+            case self::INVIO_SANZIONE :
+                Mail::to($array[self::EMAIL])->send(new SanctionSendMail($array[self::USER], $array[self::SANZIONE]));
+                break;
+
+            case self::RICHIESTA_PARTECIPAZIONE :
+                Mail::to($array[self::EMAIL])->send(new PartecipationRequestMail($array[self::LEADER], $array[self::TEAMMATE], $array[self::IDEA]));
+                break;
+
+            case self::RIMOZIONE_PROGETTO :
+                Mail::to($array[self::EMAIL])->send(new LeaderRemovesTeammateMail($array[self::TEAMMATE],  $array[self::PROJECT]));
+                break;
+
+            case self::TERMINE_PROGETTO :
+                Mail::to($array[self::EMAIL])->send(new EndProjectMail($array[self::TEAMMATE], $array[self::PROJECT]));
+                break;
+
+            case self::NEW_LEADER :
+                Mail::to($array[self::EMAIL])->send(new NewLeaderMail($array[self::LEADER], $array[self::PROJECT]));
+                break;
+
+                /** non dovrebbe mai essere raggiunto il valore di default in caso di utilizzo corretto del metodo,
+                 * è inserito per evitare errori in caso di utiilzzo errato del metodo stesso e per non generare
+                 * eventuali errori al normale flusso di esecuzione dell'applicativo
+                 */
+            default:
+                break;
+
+        }
+
+    }
+
+
+
+
+}

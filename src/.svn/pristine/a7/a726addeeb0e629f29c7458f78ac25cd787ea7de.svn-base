@@ -1,0 +1,91 @@
+@extends('layouts.app')
+
+
+@section('content')
+
+    <!-- Page Content -->
+    <div class="container">
+
+        @if(count($projects) != 0)
+            <h1 class="my-4">{{$title}}
+            </h1>
+        @else
+            <div class="align-items-center" style="position: absolute; top:30%; left: 30%">
+                <h1 class="my-4 text-center">Oh no! <br>La tua ricerca non ha prodotto risultati </h1>
+                <a class="mt-lg-5 align-items-center" href="{{route('searchPane')}}" style="text-decoration: black">Torna
+                    al pannello di ricerca</a>
+            </div>
+        @endif
+
+
+        @foreach($projects as $project)
+            @if($project->sponsored === 0)
+                <div class="row">
+                    @else
+                        <div class="row" style="background-color: #eeeeee">
+                            @endif
+                            <div class="col-md-7" style="text-align: center">
+                                @if($project->image != null)
+                                    <a href="{{route('riepilogativePage', $project->id)}}">
+                                        <img class="img-fluid rounded mb-3 mt-4 mb-md-0"
+                                             src="{{asset('/storage/'.$project->image)}}"
+                                             style="max-width: 300px; max-height: 300px" alt="">
+                                    </a>
+                                @else
+                                    <a href="{{route('riepilogativePage', $project->id)}}">
+                                        <img class="img-fluid rounded mb-3 mb-md-0"
+                                             src="{{asset('images/app/placeholder.png')}}" alt="">
+                                    </a>
+                                @endif
+                            </div>
+                            <div class="col-md-5">
+                                <h3><a class="text-dark"
+                                       href="{{route('riepilogativePage', $project->id)}}"> {{$project->name}} </a></h3>
+                                <p>{{$project->description}}</p>
+
+                                <p class="mt-3"> Numero di partecipanti attuali: {{$project->numberOfComponentsActual}}
+                                    <br>
+                                    Numero di componenti richiesti dal leader: {{$project->numberOfComponentsRequired}}
+                                </p>
+
+                                @if($project->idea_start_at != null)
+                                    <h5>Il progetto è gia iniziato </h5>
+                                @endif
+                                @if($project->sponsored === 1)
+                                    <p class="mt-1"> Sponsorizzata </p>
+                                @endif
+                                @auth()
+                                    <button class="btn btn-warning mt-lg-5" style="display: block" data-toggle="modal"
+                                            data-target="#partecipazioneModal" data-id="{{$project->id}}"
+                                            onclick="startModal({{$project->id}},1,'Request')">Richiedi di partecipare
+                                    </button>
+                                @endauth
+                            </div>
+                        </div>
+                        <hr>
+                        @endforeach
+                        @auth()
+                            <div class="bottone-paginazione d-flex">
+                                {{$projects->links()}}
+                                <a href="{{route('searchPane')}}" style="text-decoration: black; text-align: left;">Ricerca</a>
+                            </div>
+                            @include('components.partecipationRequest')
+                        @endauth
+                </div>
+                @endsection
+
+        @section('scripts')
+            <script src="{{asset('/js/scriptReport.js')}}"></script>
+        @endsection
+
+
+@section('css')
+    <style>
+
+        .bottone-paginazione > nav {
+            position: relative;
+            z-index: 0;
+        }
+
+    </style>
+@endsection

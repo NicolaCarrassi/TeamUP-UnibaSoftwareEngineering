@@ -1,0 +1,12 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class StoricoProgController extends Controller
+{
+    public function showStoricoProg() {
+        return view('storicoprog.storicoprog');
+    }
+}

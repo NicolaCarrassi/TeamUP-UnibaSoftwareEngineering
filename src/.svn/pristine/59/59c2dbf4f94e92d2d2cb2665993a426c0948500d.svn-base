@@ -1,0 +1,182 @@
+<?php
+
+namespace App\Http\Controllers\Idea;
+
+use App\Category;
+use App\Competence;
+use App\CompetencesForIdea;
+use App\Level;
+use App\Project;
+use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+
+class ProjectualIdeaController extends AbstractIdeaController
+{
+
+
+    /**
+     * ProjectualIdeaController constructor.
+     */
+    public function __construct()
+    {
+        Parent::__construct();
+        $this->middleware('auth');
+    }
+
+    public function create(){
+        $listaCompetenze = Competence::all();
+        $listaCategorie = Category::all();
+        return view('idea/createProjectualIdea', ['competenze'=>$listaCompetenze, 'categorie'=>$listaCategorie]);
+    }
+
+    public function modify($id)
+    {
+        $project = Project::findOrFail($id);
+        if($project->leader_id === auth()->user()->id) {
+            $listaCompetenze = Competence::all();
+            $listaCategorie = Category::all();
+            $competences_required = DB::table('competences')
+                ->join('competences_for_ideas', 'competences.id', '=', 'competences_for_ideas.competence_id')
+                ->select('competences.competence', 'competences_for_ideas.level')
+                ->where('competences_for_ideas.project_id', '=', $project->id)
+                ->get();
+            $category_name = DB::table('projects')
+                ->join('categories', 'projects.category_id', '=', 'categories.id')
+                ->select('categories.category')
+                ->where('projects.category_id', '=', $project->category_id)
+                ->get();
+            $this->substituteLevel($competences_required);
+            $project->category_id = $category_name[0]->category;
+            return view('idea/modifyProjectualIdea', ['progetto' => $project, 'competenze_richieste' => $competences_required, 'competenze' => $listaCompetenze, 'categorie' => $listaCategorie]);
+        }else {
+            abort(404);
+        }
+    }
+
+    public function delete()
+    {
+        // TODO: Implement deleteIdea() method.
+    }
+
+    protected function validator(array $data){
+
+        return Validator::make($data, [
+            'nameIdea' => 'required',
+            'description' => 'required',
+            'category' => 'required',
+            'numberOfComponentsRequired' => 'required',
+            'competences' => '',
+            'image' => ['image', 'mimes:jpg,jpeg,bmp,svg,png', 'max:5000'],
+            'needToMeet' => '',
+            'city' => '',
+        ]);
+
+    }
+
+    /***Funzione che si occupa del salvataggio dei dati inseriti dall'utente circa l'idea progettuale, sia
+     *  nel caso di inserimento dell'idea sia in caso di modifica della stessa
+     * @param $tipology tipologia di salvataggio (0 in caso di inserimento, 1 in caso di modifica idea)
+     * @param $id id dell'idea utile nel caso di aggiornamento dell'idea
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function store($tipology, $id) {
+        $data = request()->all();
+        $this->validator($data)->validate();
+        $obligatory = $this->setObligatoryFields($data);
+        if(request()->has('image') && !request()->has('needToMeet')){
+            $imagePath = request('image')->store('uploads', 'public');
+            $notObligatory = $this->setImage($imagePath);
+        }else if(request()->has('needToMeet') && !request()->has('image')){
+            $notObligatory = $this->setNeedToMeedAndCity($data);
+        }else if(request()->has('needToMeet') && request()->has('image')){
+            $imagePath = request('image')->store('uploads', 'public');
+            $notObligatory = array_merge($this->setImage($imagePath), $this->setNeedToMeedAndCity($data));
+        }else{
+            $notObligatory = array();
+        }
+        $save = array_merge($obligatory, $notObligatory);
+        if($tipology == 0){
+            $save['idea_proposal_at'] = now();
+            $project = Project::Create($save);
+        }else{
+            $project = Project::updateOrCreate(['id'=>$id], $save);
+            $competences_for_delete = CompetencesForIdea::where('project_id', $id);
+            $competences_for_delete->delete();
+        }
+        foreach ($data as $key => $value){
+            if($this->controlValue($key)) {
+                $competence = $this->getCompetence($key);
+                CompetencesForIdea::Create([
+                    'competence_id' => $competence,
+                    'project_id' => $project->id,
+                    'level' => $value,
+                ]);
+            }
+        }
+        return redirect('/home');
+    }
+
+    private function convertInputString($string){
+        return ucfirst(strtolower($string));
+    }
+
+    //da sostituire pluck con value
+    private function setObligatoryFields($data){
+        return array(
+            'name' => $this->convertInputString($data['nameIdea']),
+            'description' => $this->convertInputString($data['description']),
+            'category_id' => DB::table('categories')->where('category', $data['category'])->pluck('id')->first(),
+            'leader_id' => DB::table('users')->where('id', auth()->user()->id)->pluck('id')->first(),
+            'numberOfComponentsRequired' => $data['numberOfComponentsRequired'],
+            'numberOfComponentsActual' => 1,
+        );
+    }
+
+    private function setImage($imagePath){
+        return array(
+            'image' => $imagePath
+        );
+    }
+
+    private function setNeedToMeedAndCity($data){
+        return array(
+            'needToMeet' => 1,
+            'city' => $data['city']
+        );
+    }
+
+    /*lo 0 è inutile poichè mette NULL in caso needToMeet non sia settato
+    private function convertBooleanCheckBox($needToMeet){
+        if($needToMeet == true)
+            $ris = 1;
+        else
+            $ris = 0;
+        return $ris;
+    }*/
+
+    private function controlValue($element){
+        $banned_keywords = ['_token', 'nameIdea', 'description', 'category', 'numberOfComponentsRequired', 'competences', 'image', 'needToMeet', 'city', 'otherCompetences'];
+        $flag = true;
+        foreach ($banned_keywords as $prova) {
+            if ($prova === $element) {
+                $flag = false;
+                break;
+            }
+        }
+        return $flag;
+    }
+
+    private function getCompetence($key){
+        $competenza = str_replace('_', ' ', $key);
+        $id = Competence::firstOrCreate(['competence' => ($this->convertInputString($competenza))]);
+        return $id->id;
+    }
+
+    private function substituteLevel($searched){
+        for($i = 0; $i < count($searched); $i++){
+            $searched[$i]->level = Level::getStringLevel($searched[$i]->level);
+        }
+    }
+}

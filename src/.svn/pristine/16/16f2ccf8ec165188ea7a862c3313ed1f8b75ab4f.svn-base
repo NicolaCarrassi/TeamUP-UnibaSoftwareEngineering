@@ -1,0 +1,19 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class CompetencesForIdea extends Model
+{
+
+    protected $fillable = ['competence_id', 'project_id', 'level',];
+
+    public function competence(){
+        return $this->belongsTo(Competence::class);
+    }
+
+    public function project(){
+        return $this->belongsTo(ProjectualIdea::class);
+    }
+}

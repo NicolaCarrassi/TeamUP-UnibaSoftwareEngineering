@@ -1,0 +1,162 @@
+<?php
+
+namespace App\Http\Controllers\Idea;
+
+use App\Feed;
+use App\Http\Controllers\Idea\AbstractIdeaController;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utility\NotificationController;
+use App\Project;
+use App\Task;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\Team;
+use App\User;
+
+
+class ProjectController extends AbstractIdeaController
+{
+
+    public function __construct()
+    {
+        Parent::__construct();
+        $this->middleware('auth');
+    }
+
+    public function showStoricoProg() {
+        $user = Auth::user();
+
+        $all_projects = DB::select('select projects.name,users.username,leader_id,idea_start_at from projects inner join users on projects.leader_id=users.id;');
+
+        return view('progetti.storicoprog',[
+            'user' => $user,
+            'all_projects' => $all_projects
+        ]);
+    }
+
+    public function showStoricoProgettiAttivi() {
+        $user = Auth::user();
+
+        $active_project = DB::select('select name,idea_start_at,leader_id from projects;');
+
+        return view('progetti.progettiattivi',[
+            'user' => $user,
+            'active_project' => $active_project
+        ]);
+    }
+
+    public function showListaPartecipazioni() {
+
+        $user = Auth::user();
+
+        $all_requests = DB::select('select requests.id,projects.name,requests.description,state,sent_at,projects.city from ((requests inner join users on requests.teammate_id=users.id)
+        inner join projects on requests.project_id=projects.id) where users.id='.$user->id.' order by requests.id asc;');
+
+        return view('progetti.partecipazioni',[
+            'user' => $user,
+            'all_requests' => $all_requests
+        ]);
+    }
+
+    public function startProject($id){
+        $project = Project::find($id);
+        $project->idea_start_at = now();
+        $project->save();
+
+        $teammates = Team::where('project_id', $id)->get();
+        foreach ($teammates as $teammate){
+            $user = User::find($teammate->teammate_id);
+            $mailData = [
+                NotificationController::EMAIL => $user->email,
+                NotificationController::TEAMMATE => $user->username,
+                NotificationController::PROJECT => $project->name,
+            ];
+             NotificationController::mailSend(NotificationController::AVVIO_PROGETTO, $mailData);
+        }
+
+        return redirect()->route('riepilogativePage', $id);
+    }
+
+    /**
+     * Il metodo permette di annullare una richiesta di partecipazione
+     *
+     * @param $id int id della richiesta da annullare
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function annullaRichiesta($id){
+        DB::table('requests')->delete($id);
+        return redirect()->back();
+    }
+
+    public function showTasksAndFeeds($id){
+        $informations = parent::loadInformationAlwaysDisplayed($id);
+        $this->authorize('view', $informations['progetto']);
+        $tasks = DB::table('tasks')
+            ->join('users', 'tasks.teammate_id', '=', 'users.id')
+            ->select('tasks.id', 'tasks.teammate_id', 'users.username', 'tasks.description', 'tasks.assignment_date')
+            ->where('tasks.project_id', '=', $id)
+            ->simplePaginate(5);
+        $feeds = DB::table('feeds')
+            ->join('users', 'feeds.user_id', '=', 'users.id')
+            ->select('feeds.user_id', 'users.username', 'feeds.description', 'feeds.feed_date')
+            ->where('feeds.project_id', '=', $id)
+            ->simplePaginate(5);
+        return view('idea/taskFeeds', array_merge($informations, ['compiti'=>$tasks, 'aggiornamenti'=>$feeds]));
+    }
+
+    public function addNewTask($id){
+        $data = request()->validate([
+            'description' => ['required', 'string', 'max:300'],
+            'task_to_user' => 'required',
+        ]);
+        $teammate_id = DB::table('users')->where('username', $data['task_to_user'])->pluck('id')->first();
+        $task = Task::create([
+            'description' => $this->convertInputString($data['description']),
+            'project_id' => $id,
+            'teammate_id' => $teammate_id,
+            'assignment_date' => now(),
+        ]);
+        return redirect()->route('tasksAndFeeds', $id);
+    }
+
+    public function addNewFeed($id){
+        $data = request()->validate([
+            'feed' => ['required', 'string', 'max:150'],
+        ]);
+        $teammate_id = auth()->user()->id;
+        $feed = Feed::create([
+            'description' => $data['feed'],
+            'project_id' => $id,
+            'user_id' => $teammate_id,
+            'feed_date' => now(),
+        ]);
+        return redirect()->route('tasksAndFeeds', $id);
+    }
+
+    public function create(){
+
+    }
+
+    public function modify($id)
+    {
+        // TODO: Implement modify() method.
+    }
+
+    public function delete($id)
+    {
+        // TODO: Implement delete() method.
+    }
+
+    public function store($tipology, $id)
+    {
+        // TODO: Implement store() method.
+    }
+
+    public function show($id)
+    {
+        return parent::show($id);
+    }
+
+
+}

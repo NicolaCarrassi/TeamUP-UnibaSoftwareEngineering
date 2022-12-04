@@ -1,0 +1,31 @@
+
+<!-- Componente del modal per una richiesta di partecipazione -->
+<div class="modal fade" id="partecipazioneModal" tabindex="-1" role="dialog" aria-labelledby="partecipazioneModal"
+     aria-hidden="true" style="border: 2px black solid">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #f8b323">
+                <h5 class="modal-title" id="ModalTitle"> Invia la tua richiesta di partecipazione </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Chiudi">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{route('makeRequest')}}">
+                @csrf
+                <input type="hidden" id="hiddenButtonRequest" name="project_id">
+                <div class="form-group d-flex">
+                    <label for="description" class="col-form-label">Motivazione:<br>
+                        <span class="text-small text-info">Opzionale</span>
+                    </label>
+                    <textarea class="form-control ml-2" id="description" name="description"></textarea>
+                </div>
+                <div class="modal-footer mt-lg-5">
+                    <button type="button" class="btn btn-light" data-dismiss="modal"> Annulla</button>
+                    <button type="submit" class="btn btn-warning" formmethod="post" formaction="{{route('makeRequest')}}"> Invia richiesta</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

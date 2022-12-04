@@ -1,0 +1,237 @@
+<?php
+define('BROADCAST_SERVICE_PROVIDER_PATH', 'Illuminate\\Broadcasting\\BroadcastServiceProvider');
+define('BUS_SERVICE_PROVIDER_PATH', 'Illuminate\\Bus\\BusServiceProvider');
+define('CACHE_SERVICE_PROVIDER_PATH', 'Illuminate\\Cache\\CacheServiceProvider');
+define('CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH', 'Illuminate\\Foundation\\Providers\\ConsoleSupportServiceProvider');
+define('HASH_SERVICE_PROVIDER_PATH', 'Illuminate\\Hashing\\HashServiceProvider');
+define('MAIL_SERVICE_PROVIDER_PATH', 'Illuminate\\Mail\\MailServiceProvider');
+define('PIPELINE_SERVICE_PROVIDER_PATH', 'Illuminate\\Pipeline\\PipelineServiceProvider');
+define('CODA_SERVICE_PROVIDER_PATH', 'Illuminate\\Queue\\QueueServiceProvider');
+define('REDIS_SERVICE_PROVIDER_PATH', 'Illuminate\\Redis\\RedisServiceProvider');
+define('RESET_PRIVATE_INFO_PATH', 'Illuminate\\Auth\\Passwords\\PasswordResetServiceProvider');
+define('TRANSLATION_SERVICE_PROVIDER_PATH','Illuminate\\Translation\\TranslationServiceProvider');
+define('VALIDATION_SERVICE_PROVIDER_PATH', 'Illuminate\\Validation\\ValidationServiceProvider');
+define('SOCIALITE_SERVICE_PROVIDER_PATH', 'Laravel\\Socialite\\SocialiteServiceProvider');
+define('TINKER_SERVICE_PROVIDER_PATH', 'Laravel\\Tinker\\TinkerServiceProvider');
+
+
+
+return array (
+  'providers' =>
+  array (
+    0 => 'Illuminate\\Auth\\AuthServiceProvider',
+    1 => BROADCAST_SERVICE_PROVIDER_PATH,
+    2 => BUS_SERVICE_PROVIDER_PATH,
+    3 => CACHE_SERVICE_PROVIDER_PATH,
+    4 => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    5 => 'Illuminate\\Cookie\\CookieServiceProvider',
+    6 => 'Illuminate\\Database\\DatabaseServiceProvider',
+    7 => 'Illuminate\\Encryption\\EncryptionServiceProvider',
+    8 => 'Illuminate\\Filesystem\\FilesystemServiceProvider',
+    9 => 'Illuminate\\Foundation\\Providers\\FoundationServiceProvider',
+    10 => HASH_SERVICE_PROVIDER_PATH,
+    11 => MAIL_SERVICE_PROVIDER_PATH,
+    12 => 'Illuminate\\Notifications\\NotificationServiceProvider',
+    13 => 'Illuminate\\Pagination\\PaginationServiceProvider',
+    14 => PIPELINE_SERVICE_PROVIDER_PATH,
+    15 => CODA_SERVICE_PROVIDER_PATH,
+    16 => REDIS_SERVICE_PROVIDER_PATH,
+    17 => RESET_PRIVATE_INFO_PATH,
+    18 => 'Illuminate\\Session\\SessionServiceProvider',
+    19 => TRANSLATION_SERVICE_PROVIDER_PATH,
+    20 => VALIDATION_SERVICE_PROVIDER_PATH,
+    21 => 'Illuminate\\View\\ViewServiceProvider',
+    22 => 'Facade\\Ignition\\IgnitionServiceProvider',
+    23 => 'Fideloper\\Proxy\\TrustedProxyServiceProvider',
+    24 => 'Fruitcake\\Cors\\CorsServiceProvider',
+    25 => SOCIALITE_SERVICE_PROVIDER_PATH,
+    26 => TINKER_SERVICE_PROVIDER_PATH,
+    27 => 'Laravel\\Ui\\UiServiceProvider',
+    28 => 'Chatify\\ChatifyServiceProvider',
+    29 => 'Carbon\\Laravel\\ServiceProvider',
+    30 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+    31 => 'App\\Providers\\AppServiceProvider',
+    32 => 'App\\Providers\\AuthServiceProvider',
+    33 => 'App\\Providers\\EventServiceProvider',
+    34 => 'App\\Providers\\RouteServiceProvider',
+  ),
+  'eager' =>
+  array (
+    0 => 'Illuminate\\Auth\\AuthServiceProvider',
+    1 => 'Illuminate\\Cookie\\CookieServiceProvider',
+    2 => 'Illuminate\\Database\\DatabaseServiceProvider',
+    3 => 'Illuminate\\Encryption\\EncryptionServiceProvider',
+    4 => 'Illuminate\\Filesystem\\FilesystemServiceProvider',
+    5 => 'Illuminate\\Foundation\\Providers\\FoundationServiceProvider',
+    6 => 'Illuminate\\Notifications\\NotificationServiceProvider',
+    7 => 'Illuminate\\Pagination\\PaginationServiceProvider',
+    8 => 'Illuminate\\Session\\SessionServiceProvider',
+    9 => 'Illuminate\\View\\ViewServiceProvider',
+    10 => 'Facade\\Ignition\\IgnitionServiceProvider',
+    11 => 'Fideloper\\Proxy\\TrustedProxyServiceProvider',
+    12 => 'Fruitcake\\Cors\\CorsServiceProvider',
+    13 => 'Laravel\\Ui\\UiServiceProvider',
+    14 => 'Chatify\\ChatifyServiceProvider',
+    15 => 'Carbon\\Laravel\\ServiceProvider',
+    16 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+    17 => 'App\\Providers\\AppServiceProvider',
+    18 => 'App\\Providers\\AuthServiceProvider',
+    19 => 'App\\Providers\\EventServiceProvider',
+    20 => 'App\\Providers\\RouteServiceProvider',
+  ),
+  'deferred' =>
+  array (
+    'Illuminate\\Broadcasting\\BroadcastManager' => BROADCAST_SERVICE_PROVIDER_PATH,
+    'Illuminate\\Contracts\\Broadcasting\\Factory' => BROADCAST_SERVICE_PROVIDER_PATH,
+    'Illuminate\\Contracts\\Broadcasting\\Broadcaster' => BROADCAST_SERVICE_PROVIDER_PATH,
+    'Illuminate\\Bus\\Dispatcher' => BUS_SERVICE_PROVIDER_PATH,
+    'Illuminate\\Contracts\\Bus\\Dispatcher' => BUS_SERVICE_PROVIDER_PATH,
+    'Illuminate\\Contracts\\Bus\\QueueingDispatcher' => BUS_SERVICE_PROVIDER_PATH,
+    'cache' => CACHE_SERVICE_PROVIDER_PATH,
+    'cache.store' => CACHE_SERVICE_PROVIDER_PATH,
+    'cache.psr6' => CACHE_SERVICE_PROVIDER_PATH,
+    'memcached.connector' => CACHE_SERVICE_PROVIDER_PATH,
+    'command.cache.clear' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.cache.forget' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.clear-compiled' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.auth.resets.clear' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.config.cache' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.config.clear' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.db.wipe' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.down' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.environment' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.event.cache' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.event.clear' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.event.list' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.key.generate' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.optimize' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.optimize.clear' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.package.discover' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.queue.failed' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.queue.flush' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.queue.forget' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.queue.listen' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.queue.restart' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.queue.retry' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.queue.work' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.route.cache' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.route.clear' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.route.list' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.seed' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'Illuminate\\Console\\Scheduling\\ScheduleFinishCommand' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'Illuminate\\Console\\Scheduling\\ScheduleRunCommand' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.storage.link' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.up' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.view.cache' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.view.clear' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.cache.table' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.cast.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.channel.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.component.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.console.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.controller.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.event.generate' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.event.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.exception.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.factory.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.job.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.listener.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.mail.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.middleware.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.model.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.notification.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.notification.table' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.observer.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.policy.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.provider.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.queue.failed-table' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.queue.table' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.request.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.resource.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.rule.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.seeder.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.session.table' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.serve' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.stub.publish' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.test.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.vendor.publish' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'migrator' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'migration.repository' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'migration.creator' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.migrate' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.migrate.fresh' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.migrate.install' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.migrate.refresh' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.migrate.reset' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.migrate.rollback' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.migrate.status' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'command.migrate.make' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'composer' => CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH,
+    'hash' => HASH_SERVICE_PROVIDER_PATH,
+    'hash.driver' => HASH_SERVICE_PROVIDER_PATH,
+    'mail.manager' => MAIL_SERVICE_PROVIDER_PATH,
+    'mailer' => MAIL_SERVICE_PROVIDER_PATH,
+    'Illuminate\\Mail\\Markdown' => MAIL_SERVICE_PROVIDER_PATH,
+    'Illuminate\\Contracts\\Pipeline\\Hub' => PIPELINE_SERVICE_PROVIDER_PATH,
+    'queue' => CODA_SERVICE_PROVIDER_PATH,
+    'queue.worker' => CODA_SERVICE_PROVIDER_PATH,
+    'queue.listener' => CODA_SERVICE_PROVIDER_PATH,
+    'queue.failer' => CODA_SERVICE_PROVIDER_PATH,
+    'queue.connection' => CODA_SERVICE_PROVIDER_PATH,
+    'redis' => REDIS_SERVICE_PROVIDER_PATH,
+    'redis.connection' => REDIS_SERVICE_PROVIDER_PATH,
+    'auth.password' => RESET_PRIVATE_INFO_PATH,
+    'auth.password.broker' => RESET_PRIVATE_INFO_PATH,
+    'translator' => TRANSLATION_SERVICE_PROVIDER_PATH,
+    'translation.loader' => TRANSLATION_SERVICE_PROVIDER_PATH,
+    'validator' => VALIDATION_SERVICE_PROVIDER_PATH,
+    'validation.presence' => VALIDATION_SERVICE_PROVIDER_PATH,
+    'Laravel\\Socialite\\Contracts\\Factory' => SOCIALITE_SERVICE_PROVIDER_PATH,
+    'command.tinker' => TINKER_SERVICE_PROVIDER_PATH,
+  ),
+  'when' =>
+  array (
+    BROADCAST_SERVICE_PROVIDER_PATH =>
+    array (
+    ),
+    BUS_SERVICE_PROVIDER_PATH =>
+    array (
+    ),
+    CACHE_SERVICE_PROVIDER_PATH =>
+    array (
+    ),
+    CONSOLE_SUPPORT_SERVICE_PROVIDER_PATH =>
+    array (
+    ),
+    HASH_SERVICE_PROVIDER_PATH =>
+    array (
+    ),
+    MAIL_SERVICE_PROVIDER_PATH =>
+    array (
+    ),
+    PIPELINE_SERVICE_PROVIDER_PATH =>
+    array (
+    ),
+    CODA_SERVICE_PROVIDER_PATH =>
+    array (
+    ),
+    REDIS_SERVICE_PROVIDER_PATH =>
+    array (
+    ),
+    RESET_PRIVATE_INFO_PATH =>
+    array (
+    ),
+    TRANSLATION_SERVICE_PROVIDER_PATH =>
+    array (
+    ),
+    VALIDATION_SERVICE_PROVIDER_PATH =>
+    array (
+    ),
+    SOCIALITE_SERVICE_PROVIDER_PATH =>
+    array (
+    ),
+    TINKER_SERVICE_PROVIDER_PATH =>
+    array (
+    ),
+  ),
+);

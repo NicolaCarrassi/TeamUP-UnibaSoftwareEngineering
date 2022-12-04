@@ -1,0 +1,41 @@
+<div id="visualizzaCompiti" class="modal fade" tabindex="-1" role="dialog" style="margin-top: 5%;" >
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #f8b323">
+                <h5 id="tasksHeader" class="modal-title"><strong>Compiti assegnati</strong></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @if(count($compiti) === 0)
+                <div class="modal-body" style="overflow-x: hidden; overflow-y: auto; max-height: 400px;">
+                    <p class="text-dark" style="font-size: 16px;"><strong>Nessuna compito presente</strong></p>
+                </div>
+            @else
+                <div class="modal-body" style="overflow-x: hidden; overflow-y: auto; max-height: 400px;">
+                    <table id="tasks" name="tasks" class="table-responsive">
+                        <caption>Compiti</caption>
+                        <tr>
+                            <th style="max-width: 200px; word-wrap: break-word;"><p class="text-dark mr-lg-5" style="font-size: 16px;"><strong>Username</strong></p></th>
+                            <th style="max-width: 400px; word-wrap: break-word;"><p class="text-dark ml-lg-4 mr-lg-5" style="font-size: 16px;"><strong>Descrizione</strong></p></th>
+                            <th style="max-width: 300px; word-wrap: break-word;"><p class="text-dark ml-lg-4 mr-lg-5" style="font-size: 16px;"><strong>Data Assegnamento</strong></p></th>
+                        </tr>
+                        @foreach($compiti as $compito)
+                            <tr>
+                                <td style="max-width: 200px; word-wrap: break-word;"><p class="text-dark mr-lg-5" style="font-size: 16px;"><strong>{{$compito->username}}</strong></p></td>
+                                <td style="max-width: 400px; word-wrap: break-word;"><details class="ml-lg-4 mr-lg-5"><p class="text-dark" style="font-size: 16px;">{{$compito->description}}</p></details></td>
+                                <td style="max-width: 300px; word-wrap: break-word;"><p class="text-dark ml-lg-4 mr-lg-5" style="font-size: 16px;"><strong>{{substr($compito->assignment_date, 0, strlen($compito->assignment_date)-3)}}</p></td>
+                            </tr>
+                        @endforeach
+                    </table>
+                    <div class="bottone-paginazione d-flex">
+                        {{$compiti->links()}}
+                    </div>
+                </div>
+            @endif
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-dismiss="modal"><strong>Esci</strong></button>
+            </div>
+        </div>
+    </div>
+</div>

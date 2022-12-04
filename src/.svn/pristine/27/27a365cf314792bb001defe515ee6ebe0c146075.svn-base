@@ -1,0 +1,55 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+//Route a cui possono accedere anche gli utenti non registrati
+Route::get('/','FooterController@welcomePage');
+Route::get('/chisiamo','FooterController@chiSiamo')->name('chiSiamo');
+Route::get('/terms','FooterController@terms')->name('terms');
+Route::get('/regole', 'FooterController@regole')->name('regole');
+
+//Route relative a tutti i percorsi implementati nativamente dal framework
+Auth::routes();
+
+//Route per la home page
+Route::get('/home', 'HomeController@index')->name('home');
+
+
+//Route relative all'idea progettuale
+Route::post('/home/{tipology}/{id}', 'Idea\ProjectualIdeaController@store')->name('storeProjectualIdea');
+Route::get('/idea/create', 'Idea\ProjectualIdeaController@create')->name('createProjectualIdea');
+Route::get('/idea/modify/{id}', 'Idea\ProjectualIdeaController@modify')->name('modifyProjectualIdea');
+
+
+//Route relative al profilo
+Route::get('/profile/{user}', 'ProfilesController@index')->name('profile');
+Route::post('/profile/conf/confermamodifica','ModProfileController@confermamodifica')->name('confmod');
+Route::get('/profile/mod/modprofile','ModProfileController@modprofile')->name('modprofile');
+Route::get('/profile/rem/rimuovicomp','ModProfileController@removeComp')->name('remcomp');
+Route::get('profile/canc/cancellaprofilo','ModProfileController@cancellaProfilo')->name('cancprofilo');
+Route::get('/profile/storico/storicoprog','StoricoProgController@showStoricoProg')->name('storicoprog');
+
+
+//Route relative alla gestione della ricerca delle idee e alla visualizzazione di tutte le idee
+Route::get('/search', 'idea\ControllerShowIdeas@showView')->name('searchPane')->name('search');
+Route::post('/search/results', 'idea\ControllerShowIdeas@search')->name('effettuaRicerca');
+Route::get('/search/all', 'idea\ControllerShowIdeas@getAllAvailableIdeas')->name('allIdeas');
+
+
+//Route per le segnalazioni
+Route::post('/report/reportidea', 'utility\ReportController@makeReportRequest')->name('segnalaIdee');
+Route::post('/report/reportuser', 'utility\ReportController@makeReportRequestUser')->name('segnalaUser');
+
+//Route per le richieste di partecipazione
+Route::post('/request', 'idea\RequestController@makeRequest')->name('makeRequest');

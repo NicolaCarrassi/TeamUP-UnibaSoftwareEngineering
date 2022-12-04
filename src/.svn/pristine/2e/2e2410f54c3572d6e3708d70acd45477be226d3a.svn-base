@@ -1,0 +1,29 @@
+function controlNeedToMeetAndCity(){
+    let needToMeet=document.getElementById('needToMeet').checked
+    let city=document.getElementById('citta');
+    let selected=city.options[city.selectedIndex].value
+    if((needToMeet == true && selected != 'Seleziona una città...') || (needToMeet != true && selected == 'Seleziona una città...'))
+        return true
+    else {
+        alert('Necessità di incontro e città devono essere specificati assieme!')
+        return false
+    }
+}
+
+function showOption(){
+    let optionalArea = document.getElementById('myOption')
+    if(optionalArea.hidden == true) {
+        let downButton=document.getElementById('down')
+        let upButton=document.getElementById('up')
+        downButton.hidden=true
+        upButton.hidden=false
+        optionalArea.hidden=false
+    } else {
+        let upButton=document.getElementById('up')
+        let downButton=document.getElementById('down')
+        upButton.hidden=true
+        downButton.hidden=false
+        optionalArea.hidden=true
+    }
+    return false;
+}

@@ -1,0 +1,116 @@
+function showAllPartecipants(){
+    $(document).ready(function () {
+        $('#visualizzaTuttiPartecipanti').modal();
+        navbar.hidden = true;
+        $('#visualizzaTuttiPartecipanti').click(function () {
+            navbar.hidden = false;
+        });
+    });
+}
+
+function showAllRequests(){
+    $(document).ready(function () {
+        $('#visualizzaRichieste').modal();
+        navbar.hidden = true;
+        $('#visualizzaRichieste').click(function () {
+            navbar.hidden = false;
+        });
+    });
+}
+
+function showAllTasks(){
+    $(document).ready(function () {
+        $('#visualizzaCompiti').modal();
+        navbar.hidden = true;
+        $('#visualizzaCompiti').click(function () {
+            navbar.hidden = false;
+        });
+    });
+}
+
+function showAllFeeds(){
+    $(document).ready(function () {
+        $('#visualizzaFeeds').modal();
+        navbar.hidden = true;
+        $('#visualizzaFeeds').click(function () {
+            navbar.hidden = false;
+        });
+    });
+}
+
+function showAddNewTask(){
+    $(document).ready(function () {
+        $('#inserisciCompiti').modal();
+        navbar.hidden = true;
+        $('#inserisciCompiti').click(function () {
+            navbar.hidden = false;
+        });
+    });
+}
+
+function setEsitoRichiesta(idBottoneAccetta, idBottoneRifiuta, hiddenInput, esito, cerchioStato){
+    let hidden = document.getElementById(hiddenInput)
+    let buttonAccetta = document.getElementById(idBottoneAccetta)
+    let buttonRifiuta = document.getElementById(idBottoneRifiuta)
+    let stato = document.getElementById(cerchioStato)
+    stato.classList.remove('circleYellow')
+    if(esito === 1){
+        stato.classList.add('circleGreen')
+    }else{
+        stato.classList.add('circleRed')
+    }
+    buttonAccetta.hidden = true
+    buttonRifiuta.hidden = true
+    //hidden.value = esito
+    hidden.setAttribute('value', esito)
+}
+
+function restoreTableRequestLeader(){
+    let table = document.getElementById('table_requests')
+    for(i = 0; i < table.rows.length; i++) {
+        if($('#table_requests tbody tr:eq('+i+') td:eq(6) input').val() != undefined){
+            let riga = table.getElementsByTagName('tr')[i]
+            let hidden = riga.getElementsByTagName('INPUT')
+            let id = hidden[0].getAttribute('id')
+            hidden = document.getElementById(id)
+            hidden.setAttribute('value', 0)
+            let buttonAccetta = document.getElementById('buttonAccetta'+id)
+            let buttonRifiuta = document.getElementById('buttonRifiuta'+id)
+            buttonAccetta.hidden = false
+            buttonRifiuta.hidden = false
+            let cerchioStato = document.getElementById('cerchioStato'+id)
+            cerchioStato.classList.remove('circleRed')
+            cerchioStato.classList.remove('circleGreen')
+            cerchioStato.classList.add('circleYellow')
+        }
+    }
+}
+
+function hideRow(idRow, hiddenInput){
+    let hidden = document.getElementById(hiddenInput)
+    hidden.setAttribute('value', 1)
+    let row = document.getElementById(idRow)
+    row.hidden = true;
+}
+
+function restoreTableTeam(idTable){
+    let table = document.getElementById(idTable)
+    for(i = 0; i < table.rows.length; i++){
+        if(table.rows[i].hidden === true){
+            let riga = table.getElementsByTagName('tr')[i]
+            let hidden = riga.getElementsByTagName('INPUT')
+            let id = hidden[0].getAttribute('id')
+            hidden = document.getElementById(id)
+            hidden.setAttribute('value', 0)
+            table.rows[i].hidden = false;
+        }
+    }
+}
+
+$("#visualizzaTuttiPartecipanti").on("hidden.bs.modal", function () {
+    restoreTableTeam('table_membri_team');
+})
+
+$("#visualizzaRichieste").on("hidden.bs.modal", function () {
+    restoreTableRequestLeader();
+})

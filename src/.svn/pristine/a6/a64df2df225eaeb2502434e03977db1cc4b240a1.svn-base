@@ -1,0 +1,55 @@
+function showAllPartecipants(){
+    $(document).ready(function () {
+        $('#visualizzaTuttiPartecipanti').modal();
+        navbar.hidden = true;
+        $('#visualizzaTuttiPartecipanti').click(function () {
+            navbar.hidden = false;
+        });
+    });
+}
+
+function showAllRequests(){
+    $(document).ready(function () {
+        $('#visualizzaRichieste').modal();
+        navbar.hidden = true;
+        $('#visualizzaRichieste').click(function () {
+            navbar.hidden = false;
+        });
+    });
+}
+
+function showAllTasks(){
+    $(document).ready(function () {
+        $('#visualizzaCompiti').modal();
+        navbar.hidden = true;
+        $('#visualizzaCompiti').click(function () {
+            navbar.hidden = false;
+        });
+    });
+}
+
+function showAddNewTask(){
+    $(document).ready(function () {
+        $('#inserisciCompiti').modal();
+        navbar.hidden = true;
+        $('#inserisciCompiti').click(function () {
+            navbar.hidden = false;
+        });
+    });
+}
+
+function setEsitoRichiesta(idBottoneAccetta, idBottoneRifiuta, hiddenInput, esito, cerchioStato){
+    let hidden = document.getElementById(hiddenInput)
+    let buttonAccetta = document.getElementById(idBottoneAccetta)
+    let buttonRifiuta = document.getElementById(idBottoneRifiuta)
+    let stato = document.getElementById(cerchioStato)
+    stato.classList.remove('circleYellow')
+    if(esito === 1){
+        stato.classList.add('circleGreen')
+    }else{
+        stato.classList.add('circleRed')
+    }
+    buttonAccetta.hidden = true
+    buttonRifiuta.hidden = true
+    hidden.value = esito
+}

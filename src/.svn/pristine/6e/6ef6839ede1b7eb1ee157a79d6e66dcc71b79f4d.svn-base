@@ -1,0 +1,62 @@
+<?php
+
+namespace App\Http\Controllers\Idea;
+
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\utility\NotificationController;
+use App\Request as MyRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class RequestController extends Controller{
+
+    const TEAMMATE = 'teammate_id';
+    const PROJECT = 'project_id';
+    const DESCRIPTION = 'description';
+    const DATA_INVIO = 'sent_at';
+
+
+    public function makeRequest(Request $request){
+        $data = $request->all();
+
+        if($data[self::DESCRIPTION] == null){
+            MyRequest::create([
+                self::PROJECT => $data[self::PROJECT],
+                self::TEAMMATE => Auth::id(),
+                self::DATA_INVIO => now()
+            ]);
+        } else {
+            MyRequest::create([
+                self::PROJECT => $data[self::PROJECT],
+                self::TEAMMATE => Auth::id(),
+                self::DATA_INVIO => now(),
+                self::DESCRIPTION => $data[self::DESCRIPTION]
+            ]);
+        }
+
+
+        self::sendMail($data);
+
+        return redirect()->back();
+    }
+
+
+    private static function sendMail($data){
+            //fetch dati per email
+        $leader = DB::table('users')->whereRaw('id = (select leader_id from projects where id = ' .$data[self::PROJECT].')')->first();
+        $idea = DB::table('projects')->whereRaw('id  = '.$data[self::PROJECT])->pluck('name')->first();
+
+        $array = [
+            'email' => $leader->email,
+            'leader' => $leader->username,
+            'nomeTeammate' => Auth::user()->username,
+            'nomeIdea' => $idea
+        ];
+
+
+        NotificationController::mailSend(NotificationController::RICHIESTA_PARTECIPAZIONE, $array);
+
+    }
+
+}

@@ -1,0 +1,193 @@
+<?php
+
+namespace App\Http\Controllers\Idea;
+
+use App\CompetencesForIdea;
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\Utility\NotificationController;
+use App\Level;
+use App\Project;
+use App\Team;
+use App\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\Request;
+
+abstract class AbstractIdeaController extends Controller
+{
+
+    const LEADER = 'leader';
+    const TEAMMATE = 'teammate';
+
+    /**
+     * AbstractIdeaController constructor.
+     */
+    public function __construct()
+    {
+    }
+
+    public abstract function create();
+    public abstract function modify($id);
+    public abstract function delete($id);
+    public abstract function store($tipology, $id);
+
+    public function getRequests($id){
+        $richieste = DB::table('requests')
+            ->join('users', 'requests.teammate_id', '=', 'users.id')
+            ->select('users.username', 'requests.description', 'requests.id', 'requests.teammate_id', 'requests.sent_at', 'requests.state')
+            ->where('requests.project_id', '=', $id)
+            ->get();
+        return $richieste;
+    }
+
+    protected function loadInformationAlwaysDisplayed($id){
+        $richieste = $this->getRequests($id);
+        $project = Project::findOrFail($id);
+        $info_leader = DB::table('users')->where('id', '=', $project->leader_id)->select('username', 'name')->first();
+        $project->leader_id = ['leader_id' => $project->leader_id, 'leader_username' => $info_leader->username, 'leader_name' =>  $info_leader->name];
+        $teammates = DB::table('teams')
+            ->join('users', 'teams.teammate_id', '=', 'users.id')
+            ->select( 'users.id', 'users.username', 'name')
+            ->where('teams.project_id', '=', $project->id)
+            ->get();
+        $project->teammates = $teammates;
+        return ['progetto'=>$project, 'richieste'=>$richieste];
+    }
+
+    public function show($id){
+        $informations = $this->loadInformationAlwaysDisplayed($id);
+        $category_name = DB::table('categories')->where('id', '=', $informations['progetto']->category_id)->pluck('category')->first();
+        $competences_required = DB::table('competences')
+            ->join('competences_for_ideas', 'competences.id', '=', 'competences_for_ideas.competence_id')
+            ->select('competences.competence', 'competences_for_ideas.level')
+            ->where('competences_for_ideas.project_id', '=', $informations['progetto']->id)
+            ->get();
+        $this->substituteLevel($competences_required);
+        $informations['progetto']->category_id = $category_name;
+        return view('idea/infoIdea', array_merge($informations, ['competenze_richieste'=>$competences_required]));
+    }
+
+    /** Il metodo permette di sponsorizzare un progetto e di segnalarlo come sponsorizzato
+     * Non gestisce il metodo in cui viene effettuato il pagamento della segnalazione
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function sponsor($id){
+        $projectualIdea = Project::findOrFail($id);
+        $projectualIdea->sponsored = 1;
+        $projectualIdea->save();
+        return redirect()->back();
+    }
+
+    private function substituteLevel($searched){
+        for($i = 0; $i < count($searched); $i++){
+            $searched[$i]->level = Level::getStringLevel($searched[$i]->level);
+        }
+    }
+
+    protected function convertInputString($string){
+        return ucfirst(strtolower($string));
+    }
+
+
+
+    /**
+     * Il metodo permette di abbandonare un progetto o un'idea progettuale, controllando che
+     * l'utente sia partecipante del team o meno. In caso affermativo si passa al metodo che permette
+     * la rimozione effettiva del teammate
+     *
+     * @param $id int id del progetto che si intende abbandonare
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function leave($id){
+        $progetto = Project::find($id);
+        $team = Team::where('project_id', $id)->get();
+        $userId = Auth::id();
+        $goToProject = true;
+
+        if($userId === $progetto->leader_id){
+            $goToProject = $this->removeFromProject($userId, $progetto,self::LEADER);
+        } else {
+            //controllo che sia nel team, se è parte di esso procedo con la rimozione
+            if($this->isPartOfTeam($userId, $team)){
+                $this->removeFromProject($userId, $progetto, self::TEAMMATE);
+                //invio della mail
+                $leader = User::find($progetto->leader_id);
+                $mailData = [
+                  NotificationController::EMAIL =>  $leader->email,
+                    NotificationController::LEADER => $leader->username,
+                    NotificationController::TEAMMATE => Auth::user()->username,
+                    NotificationController::PROJECT => $progetto->name,
+                ];
+                NotificationController::mailSend(NotificationController::ABBANDONO_PROGETTO,$mailData);
+            }
+        }
+        if($goToProject) {
+            return redirect()->back();
+        } else {
+            return redirect('/');
+        }
+    }
+
+    /**
+     * Il metodo permette di effettuare la rimozione di un utente da un progetto o idea progettuale
+     *
+     * @param int $userId id dell'utente da rimuovere
+     * @param Project $progetto progetto da cui si rimuove l'utente
+     * @param string $role ruolo dell'utente nel progetto (leader o teammate)
+     * @return bool true se il progetto è ancora esistente, false altrimenti
+     * @throws \Exception
+     */
+    private function removeFromProject(int $userId, Project $progetto,string $role){
+        $flag = true;
+        if ($progetto->numberOfComponentsActual > 1) {
+            if ($role === self::LEADER) {
+                $eldestTeammate = Team::where('project_id', $progetto->id)->orderByRaw('join_date')->first();
+                $progetto->leader_id = $eldestTeammate->teammate_id;
+                //utilizzato per rendere comune l'eliminazione della row dal db in quanto essendo il nuovo leader
+                // non deve più essere presente nella tabella dei teammate per il progetto
+                $userId = $eldestTeammate->teammate_id;
+
+                //invio mail al nuovo leader
+                $newLeader = User::find($userId);
+                $mailData = [
+                    NotificationController::EMAIL => $newLeader->email,
+                    NotificationController::LEADER => $newLeader->username,
+                    NotificationController::PROJECT => $progetto->name,
+                ];
+                NotificationController::mailSend(NotificationController::NEW_LEADER, $mailData);
+            }
+            $progetto->numberOfComponentsActual--;
+            $progetto->save();
+            DB::delete('delete from teams where teammate_id = ' . $userId);
+        } else {
+            $competences_for_delete = CompetencesForIdea::where('project_id', $progetto->id);
+            $competences_for_delete->delete();
+            $progetto->delete();
+            $flag = false;
+        }
+        return $flag;
+    }
+
+    /**
+     * Il metodo permette di verificare se un utente è un teammate per il progetto o meno
+     *
+     * @param int $userId id dell'user che si ricerca
+     * @param $team Collection di teammate per il progetto che si intende controllare
+     * @return bool true se si appartiene al team, false altrimenti
+     */
+    private function isPartOfTeam(int $userId, $team){
+        $flag = false;
+        $i = 0;
+        if(count($team) !== 0) {
+            do {
+                if ($userId === $team[$i]->teammate_id) {
+                    $flag = true;
+                }
+                $i++;
+            } while (!$flag && $i < count($team));
+        }
+        return $flag;
+    }
+
+}

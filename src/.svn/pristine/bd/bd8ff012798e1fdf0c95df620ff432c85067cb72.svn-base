@@ -1,0 +1,79 @@
+<?php
+
+namespace App\Http\Controllers\Idea;
+
+use App\Http\Controllers\Controller;
+use App\Level;
+use App\Project;
+use Illuminate\Support\Facades\DB;
+use App\Request;
+
+abstract class AbstractIdeaController extends Controller
+{
+
+    /**
+     * AbstractIdeaController constructor.
+     */
+    public function __construct()
+    {
+    }
+
+    public abstract function create();
+    public abstract function modify($id);
+    public abstract function delete($id);
+    public abstract function store($tipology, $id);
+
+    public function getRequests($id){
+        $richieste = DB::table('requests')
+            ->join('users', 'requests.teammate_id', '=', 'users.id')
+            ->select('users.username', 'requests.description', 'requests.id', 'requests.teammate_id', 'requests.sent_at', 'requests.state')
+            ->where('requests.project_id', '=', $id)
+            ->get();
+        return $richieste;
+    }
+
+    protected function loadInformationAlwaysDisplayed($id){
+        $richieste = $this->getRequests($id);
+        $project = Project::findOrFail($id);
+        $info_leader = DB::table('users')->where('id', '=', $project->leader_id)->select('username', 'name')->first();
+        $project->leader_id = ['leader_id' => $project->leader_id, 'leader_username' => $info_leader->username, 'leader_name' =>  $info_leader->name];
+        $teammates = DB::table('teams')
+            ->join('users', 'teams.teammate_id', '=', 'users.id')
+            ->select( 'users.id', 'users.username', 'name')
+            ->where('teams.project_id', '=', $project->id)
+            ->get();
+        $project->teammates = $teammates;
+        return ['progetto'=>$project, 'richieste'=>$richieste];
+    }
+
+    public function show($id){
+        $informations = $this->loadInformationAlwaysDisplayed($id);
+        $category_name = DB::table('categories')->where('id', '=', $informations['progetto']->category_id)->pluck('category')->first();
+        $competences_required = DB::table('competences')
+            ->join('competences_for_ideas', 'competences.id', '=', 'competences_for_ideas.competence_id')
+            ->select('competences.competence', 'competences_for_ideas.level')
+            ->where('competences_for_ideas.project_id', '=', $informations['progetto']->id)
+            ->get();
+        $this->substituteLevel($competences_required);
+        $informations['progetto']->category_id = $category_name;
+        return view('idea/infoIdea', array_merge($informations, ['competenze_richieste'=>$competences_required]));
+    }
+
+    public function sponsor($id){
+        $projectualIdea = Project::findOrFail($id);
+        $projectualIdea->sponsored = 1;
+        $projectualIdea->save();
+        return redirect()->back();
+    }
+
+    private function substituteLevel($searched){
+        for($i = 0; $i < count($searched); $i++){
+            $searched[$i]->level = Level::getStringLevel($searched[$i]->level);
+        }
+    }
+
+    protected function convertInputString($string){
+        return ucfirst(strtolower($string));
+    }
+
+}

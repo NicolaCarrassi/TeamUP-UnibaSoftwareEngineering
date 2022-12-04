@@ -1,0 +1,203 @@
+<?php
+
+namespace App\Http\Controllers\Idea;
+
+use App\Category;
+use App\City;
+use App\Competence;
+use App\CompetencesForIdea;
+use App\Level;
+use App\Project;
+use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+
+class ProjectualIdeaController extends AbstractIdeaController
+{
+
+
+    /**
+     * ProjectualIdeaController constructor.
+     */
+    public function __construct()
+    {
+        Parent::__construct();
+        $this->middleware('auth');
+    }
+
+    public function create(){
+        $listaCompetenze = DB::table('competences')->where('verified', '=', 1)->get();
+        $listaCategorie = Category::all();
+        $listaCitta = City::all();
+        return view('idea/createProjectualIdea', ['competenze'=>$listaCompetenze, 'categorie'=>$listaCategorie, 'citta'=>$listaCitta]);
+    }
+
+    public function modify($id)
+    {
+        return $this->loadData($id, 'idea/modifyProjectualIdea');
+    }
+
+    public function delete($id)
+    {
+        return $this->loadData($id, 'idea/deleteProjectualIdea');
+    }
+
+    public function show($id)
+    {
+        return parent::show($id);
+    }
+
+    private function loadData($id, $pathView){
+        $project = Project::findOrFail($id);
+        $this->authorize('update', $project);
+        $listaCompetenze = DB::table('competences')->where('verified', '=', 1)->get();
+        $listaCategorie = Category::all();
+        $listaCitta = City::all();
+        $category_name = DB::table('categories')->where('id', '=', $project->category_id)->pluck('category')->first();
+        $competences_required = DB::table('competences')
+            ->join('competences_for_ideas', 'competences.id', '=', 'competences_for_ideas.competence_id')
+            ->select('competences.competence', 'competences_for_ideas.level')
+            ->where('competences_for_ideas.project_id', '=', $project->id)
+            ->get();
+        $this->substituteLevel($competences_required);
+        $project->category_id = $category_name;
+        return view($pathView, ['progetto' => $project, 'competenze_richieste' => $competences_required, 'competenze' => $listaCompetenze, 'categorie' => $listaCategorie, 'citta' => $listaCitta]);
+    }
+
+    protected function validator(array $data){
+        return Validator::make($data, [
+            'nameIdea' => ['required', 'string', 'max:50', 'min:2'],
+            'description' => ['required', 'string', 'max:300'],
+            'category' => 'required',
+            'numberOfComponentsRequired' => ['required', 'numeric', 'max:100', 'min:2'],
+            'competences' => '',
+            'image' => ['sometimes', 'image', 'mimes:jpg,jpeg,bmp,svg,png', 'max:5000'],
+            'needToMeet' => 'sometimes',
+            'city' => 'sometimes',
+        ]);
+
+    }
+
+    /***Funzione che si occupa del salvataggio dei dati inseriti dall'utente circa l'idea progettuale, sia
+     *  nel caso di inserimento dell'idea sia in caso di modifica della stessa
+     *
+     * @param $tipology tipologia di salvataggio (0 in caso di inserimento, 1 in caso di modifica idea)
+     * @param $id id dell'idea utile nel caso di aggiornamento dell'idea
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function store($tipology, $id) {
+        $data = request()->all();
+        $this->validator($data)->validate();
+
+        if((int)$tipology === 0){
+            $obligatory = $this->setObligatoryFields(0, null, $data);
+        }else{
+            $obligatory = $this->setObligatoryFields(1, $id, $data);
+        }
+        if(request()->has('image') && !request()->has('needToMeet')){
+            $imagePath = request('image')->store('uploads', 'public');
+            $notObligatory = array_merge($this->setImage($imagePath), ['needToMeet'=>null, 'city'=>null]);
+        }else if(request()->has('needToMeet') && !request()->has('image')){
+            $notObligatory = $this->setNeedToMeedAndCity($data);
+        }else if(request()->has('needToMeet') && request()->has('image')){
+            $imagePath = request('image')->store('uploads', 'public');
+            $notObligatory = array_merge($this->setImage($imagePath), $this->setNeedToMeedAndCity($data));
+        }else{
+            $notObligatory = array('needToMeet'=>null, 'city'=>null);
+        }
+        $save = array_merge($obligatory, $notObligatory);
+        if((int)$tipology == 0){
+            $save['idea_proposal_at'] = now();
+            $project = Project::Create($save);
+            $id = $project->id;
+        }else{
+            $project = Project::updateOrCreate(['id'=>$id], $save);
+            $competences_for_delete = CompetencesForIdea::where('project_id', $id);
+            $competences_for_delete->forceDelete();
+        }
+        foreach ($data as $key => $value){
+            if($this->controlValue($key)) {
+                $competence = $this->getCompetence($key);
+                CompetencesForIdea::Create([
+                    'competence_id' => $competence,
+                    'project_id' => $project->id,
+                    'level' => $value,
+                ]);
+            }
+        }
+        return redirect()->route('riepilogativePage', $id);
+    }
+
+    public function remove($id){
+        $competences_for_delete = CompetencesForIdea::where('project_id', $id);
+        $competences_for_delete->delete();
+        $project = Project::find($id);
+        $project->delete();
+        return redirect()->route('home');
+    }
+
+    //0 tipologia di inserimento, 1 per la tipologia di modifica
+    private function setObligatoryFields($tipology, $id, $data){
+        if((int)$tipology === 0){
+            $numberOfComponentsActual = 1;
+        }else{
+            $numberOfComponentsActual = Project::find($id)->numberOfComponentsActual;
+        }
+        return array(
+            'name' => $this->convertInputString($data['nameIdea']),
+            'description' => $this->convertInputString($data['description']),
+            'category_id' => DB::table('categories')->where('category', $data['category'])->pluck('id')->first(),
+            'leader_id' => auth()->user()->id,
+            'numberOfComponentsRequired' => $data['numberOfComponentsRequired'],
+            'numberOfComponentsActual' => $numberOfComponentsActual,
+        );
+    }
+
+    private function setImage($imagePath){
+        return array(
+            'image' => $imagePath
+        );
+    }
+
+    private function setNeedToMeedAndCity($data){
+        return array(
+            'needToMeet' => 1,
+            'city' => $data['city']
+        );
+    }
+
+    /*lo 0 è inutile poichè mette NULL in caso needToMeet non sia settato
+    private function convertBooleanCheckBox($needToMeet){
+        if($needToMeet == true)
+            $ris = 1;
+        else
+            $ris = 0;
+        return $ris;
+    }*/
+
+    private function controlValue($element){
+        $banned_keywords = ['_token', 'nameIdea', 'description', 'category', 'numberOfComponentsRequired', 'competences', 'image', 'needToMeet', 'city', 'otherCompetences'];
+        $flag = true;
+        foreach ($banned_keywords as $prova) {
+            if ($prova === $element) {
+                $flag = false;
+                break;
+            }
+        }
+        return $flag;
+    }
+
+    private function getCompetence($key){
+        $competenza = str_replace('_', ' ', $key);
+        $id = Competence::firstOrCreate(['competence' => ($this->convertInputString($competenza))]);
+        return $id->id;
+    }
+
+
+    public function sponsor($id){
+        return parent::sponsor($id);
+    }
+
+
+}

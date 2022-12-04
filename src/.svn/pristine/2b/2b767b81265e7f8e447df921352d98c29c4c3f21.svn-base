@@ -1,0 +1,80 @@
+<?php
+
+namespace App\Http\Controllers\admin;
+
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
+
+class AdminController extends AbstractAdminController {
+
+    const CLOSEDATE = 'closedate';
+    const HIDDENID_REPORT = 'hiddenid_report';
+    const BAN = 'ban';
+    const HIDDENID_OBJECT_REPORTED = 'hiddenid_object_reported';
+
+    public function showAllReports($admin) {
+
+        $all_reports_users = $this->getUtentiSegnalati(-1);
+        $all_reports_projects = $this->getProgettiSegnalati(-1);
+
+        //dd($all_reports_projects);
+
+        return view('admin.adminsegnalazioni',[
+            'admin' => $this->getAdmin($admin),
+            'all_reports_users' => $all_reports_users,
+            'all_reports_projects' => $all_reports_projects
+        ]);
+    }
+
+    public function showAllIdeas($admin) {
+
+        $all_ideas = $this->getIdee(-1);
+
+        return view('admin.adminidee',[
+            'admin' => $this->getAdmin($admin),
+            'all_ideas' => $all_ideas
+        ]);
+    }
+
+    public function showAllActiveProjects($admin) {
+
+        $active_projects = $this->getProgettiAttivi(-1);
+
+        return view('admin.adminactiveprojects',[
+            'admin' => $this->getAdmin($admin),
+            'active_projects' => $active_projects
+        ]);
+    }
+
+    public function acceptReport(Request $request,$report,$report_type) {
+
+        $data = $request->all();
+        $now = now()->toDateString();
+
+        if($report_type==0) {
+            if($request->input(self::BAN)===null) {
+                $request->validate([
+                    self::CLOSEDATE => 'required | date | after_or_equal: ' . $now,
+                ]);
+
+                DB::update('update report_users set closed_at=timestamp("'.$data[self::CLOSEDATE].'") where id='.$data[self::HIDDENID_REPORT].';');
+                DB::update('update users set report_end=timestamp("'.$data[self::CLOSEDATE].'") where id='.$data[self::HIDDENID_OBJECT_REPORTED].';');
+                DB::update('update report_users set managed='.$report.' where id='.$data[self::HIDDENID_REPORT].';');
+            } else {
+                DB::update('update report_users set managed=3 where id='.$data[self::HIDDENID_REPORT].';');
+                DB::update('update users set is_banned='.$data[self::BAN].' where id='.$data[self::HIDDENID_OBJECT_REPORTED].';');
+            }
+        } else {
+            DB::insert('insert into storico_progettis(project_id,end_date,ended) values ('.$data[self::HIDDENID_OBJECT_REPORTED].',timestamp("'.$now.'"),0);');
+            DB::delete('delete from report_projects where id='.$data[self::HIDDENID_REPORT].';');
+            //DB::update('update projects set deleted_at=timestamp("'.$now.'") where id='.$data[self::HIDDENID_OBJECT_REPORTED]);
+            $this->deleteProject($data[self::HIDDENID_OBJECT_REPORTED]);
+        }
+
+        return redirect()->back();
+
+    }
+
+}

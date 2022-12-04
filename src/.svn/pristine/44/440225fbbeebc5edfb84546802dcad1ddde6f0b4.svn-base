@@ -1,0 +1,182 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\City;
+use App\Skill;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Auth\RegisterController;
+
+class ModProfileController extends Controller{
+
+
+    public function confermamodifica(Request $request){
+
+        //prendo dati utente autenticato
+        $user = Auth::user();
+        //prendo numero di competenze precedentemente associate all'utente
+        $numcomp = DB::table('skills')->where('user_id', $user->id)->count();
+
+        //passo tutti i dati della richiesta di cui ho bisogno in array
+        $data = $request->all();
+
+        //necessaria per switch successivo
+        $uniqueDataUpdated = 0;
+
+        //se vi è più di una competenza le elimino dal database prima di reinserirle
+        if ($numcomp > 1)
+            DB::delete( 'delete from skills where user_id=' . $user->id . ';');
+
+
+        //controllo che username e/o email siano stati modificati e che siano diversi da null, in caso opposto non effettuo la modifica dei campi
+        if($data['username'] !== $user->username && $data['username'] !== null)
+        $uniqueDataUpdated++;
+        if($data['email'] !== $user->email && $data['email'] !== null)
+        $uniqueDataUpdated +=2;
+
+
+        //effettuo la validazione dei campi eventualmente modificati dall'utente
+        $this->validateFields($request, $uniqueDataUpdated);
+
+
+
+
+        //inserisco i dati modificati dall'utente (solo i dati unici
+        switch ($uniqueDataUpdated){
+            case 1:
+                $user->username = $data['username'];
+                break;
+            case 2:
+                $user->email = $data['email'];
+                break;
+            case 3:
+                $user->username = $data['username'];
+                $user->email = $data['email'];
+                break;
+            default:
+                break;
+        }
+
+        // il nome completo viene modificato solo se differente
+        if($data['name'] !== $user->name)
+           $user->name = $data['name'];
+
+        //se l'immagine è diversa valuto la possibilità che l'utente abbia deciso di rimuovere la sua immagine e in caso affermativo gli assegno l'immagine di default, altrimenti viene salvata la nuova immagina
+        if($request->has('avatar')) {
+            if ($data['avatar'] !== $user->avatar && $data['ImageUpdate'] === 'yes')
+                if ($data['avatar'] !== null) {
+                    $file = request()->file('avatar');
+                    $extension = $file->getClientOriginalExtension();
+                    $nome = $data['username'] . '.' . $extension;
+                    $file->storeAs('users-avatar', $nome, 'public');
+
+                    $user->avatar = $nome;
+                } else
+                    $user->avatar = config('chatify.user_avatar.default');
+        } else {
+            if($data['ImageUpdate'] === 'yes')
+                $user->avatar = config('chatify.user_avatar.default');
+        }
+
+        if($data['city'] !== $user->city)
+            if($data['city'] === 'Seleziona una città...')
+                $data->city = null;
+            else
+                $user->city = $data['city'];
+
+            if($data['birth_date'] !== $user->birth_date)
+                $user->birth_date = $data['birth_date'];
+
+            //rimuovo il riferimento al bottone nascosto in quanto provocherebbe un errore
+          unset($data['ImageUpdate']);
+
+
+        foreach ($data as $key=> $valore) {
+            if (RegisterController::controlValue($key)) {
+                $competence = RegisterController::getCompetenza($key);
+                Skill::create([
+                    'user_id' => $user->id,
+                    'competence_id' => $competence,
+                    'level' => $valore
+                ]);
+            }
+        }
+        $user->save();
+
+        return redirect()->route('profile',$user->id);
+    }
+
+
+    public function modprofile() {
+        $user = Auth::user();
+        $usercomp= DB::select('select competence,skills.id,level from ((competences inner join skills on competences.id=skills.competence_id) inner  join
+                 users on users.id=skills.user_id) where user_id='.$user->id.';');
+        $competenze = DB::table('competences')->where('verified', 1)->get();
+        return view('profileview.modprofilo',[
+            'user' => $user,
+            'usercomp'=> $usercomp,
+            'allcompetenze' => $competenze,
+            'citta' => City::all(),
+        ]);
+    }
+
+
+    public function cancellaProfilo() {
+        $user = Auth::user();
+
+        DB::delete('delete from users where id='.$user->id.';');
+
+        return redirect()->route('home');
+    }
+
+    /**
+     * Il metodo permette di effettuare la validazione dei dati inseriti dall'utente
+     *
+     *
+     * @param $request Request dati inviati dall'utente
+     * @param int $modifiedFields valore della configurazione di cui si richiede il controllo
+     */
+    private function validateFields(Request $request, int $modifiedFields){
+        //in base ai campi modificati effettuo la validazione degli elementi
+        switch($modifiedFields){
+            //modifica allo username, non alla email
+            case 1 :
+                $request->validate([
+                    'username'=>['required', 'string', 'max:255', 'unique:users','regex: /^[A-Za-z0-9_-]{3,255}$/'],
+                    'birth_date'=>['sometimes', 'date', 'before:-13 years'],
+                    'email' => ['sometimes', 'string', 'email', 'max:255'],
+                    'avatar' =>['sometimes', 'image','mimes:jpg,jpeg,bmp,svg,png', 'max:5000'],
+                    ]);
+                break;
+            //modifica della email, non dello username
+            case 2 :
+
+                 $request->validate([
+                        'username'=>['sometimes', 'string', 'max:255', 'regex: /^[A-Za-z0-9_-]{3,255}$/'],
+                        'birth_date'=>['sometimes', 'date', 'before:-13 years'],
+                        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+                        'avatar' =>['sometimes', 'image','mimes:jpg,jpeg,bmp,svg,png', 'max:5000'],
+                ]);
+                break;
+            //modifica di username ed email
+            case 3:
+                $request->validate([
+                    'username'=>['required', 'string', 'max:255', 'unique:users','regex: /^[A-Za-z0-9_-]{3,255}$/'],
+                    'birth_date'=>['sometimes', 'date', 'before:-13 years'],
+                    'avatar' =>['sometimes', 'image','mimes:jpg,jpeg,bmp,svg,png', 'max:5000'],
+                    'email' => ['required', 'string', 'email', 'unique:users', 'max:255'],
+                ]);
+                break;
+            //username ed email non modificati
+            default:
+                 $request->validate([
+                    'birth_date'=>['sometimes', 'date', 'before:-13 years'],
+                    'avatar' =>['sometimes','mimes:jpg,jpeg,bmp,svg,png', 'max:5000'],
+                ]);
+                break;
+        }
+    }
+
+}

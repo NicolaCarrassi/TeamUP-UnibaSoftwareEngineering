@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Http\Controllers\Utility;
+
+use App\Http\Controllers\Controller;
+use App\Mail\PartecipationRequestMail;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+
+
+/**
+ * Class NotificationController
+ *
+ * La classe permette di effettuare l'invio delle notifiche in seguito ad eventi, per tanto
+ * essa centralizza l'invio di email attraverso l'ausilio di un metodo statico
+ *
+ * @package App\Http\Controllers\utility
+ *
+ */
+class NotificationController extends Controller{
+
+    const PROJECT = 'project_id';
+    private const EMAIL = 'email';
+    public  const RICHIESTA_PARTECIPAZIONE = 'part_request';
+
+
+    /**
+     * Il metodo permette di inviare una mail attraverso il controller comune a tutti i metodi
+     * @param $string string la costante necessaria per l'invio della mail necessaria
+     * @param $array array di dati da passare alla mail per la generazione di essa.
+     */
+    public static function mailSend($string, $array){
+        switch ($string){
+
+            case self::RICHIESTA_PARTECIPAZIONE :
+                Mail::to($array[self::EMAIL])->send(new PartecipationRequestMail($array['leader'], $array['nomeTeammate'], $array['nomeIdea']));
+                break;
+        }
+
+
+        return;
+    }
+
+
+
+
+}

@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Http\Controllers\admin;
+
+use App\Admins;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
+
+abstract class AbstractAdminController extends Controller {
+
+    protected function getAdmin($admin) {
+        return Admins::where('id',$admin)->first();
+    }
+
+    protected function getUtentiSegnalati($limit) {
+        if($limit!==-1)
+            return DB::select('select A.username as user1_username,B.username as user2_username,B.id as user2_id,report_users.id,reason,description from ((report_users inner join users as A on report_users.user1_id=A.id)
+            inner join users as B on report_users.user2_id=B.id) where managed=0 limit '.$limit.';');
+        else
+            return DB::select('select A.username as user1_username,B.username as user2_username,B.id as user2_id,report_users.id,reason,description from ((report_users inner join users as A on report_users.user1_id=A.id)
+            inner join users as B on report_users.user2_id=B.id) where managed=0;');
+    }
+
+    public function getProgettiSegnalati($limit) {
+        if($limit!==-1)
+            return DB::select('select report_projects.id,projects.id as project_id,projects.name,report_projects.description,reason,users.username as username,idea_start_at from (((projects left join storico_progettis on projects.id=storico_progettis.project_id)
+            inner join report_projects on projects.id=report_projects.project_id) inner join users on report_projects.user_id=users.id) where deleted_at is null and end_date is null limit '.$limit.';');
+        else
+            return DB::select('select report_projects.id,projects.id as project_id,projects.name,report_projects.description,reason,users.username as username,idea_start_at from (((projects left join storico_progettis on projects.id=storico_progettis.project_id)
+            inner join report_projects on projects.id=report_projects.project_id) inner join users on report_projects.user_id=users.id) where deleted_at is null and end_date is null;');
+    }
+
+    protected function getProgettiAttivi($limit) {
+        if($limit!==-1)
+            return DB::select('select projects.id,projects.name,description from projects left join storico_progettis on projects.id=storico_progettis.project_id
+            where idea_start_at is not null and deleted_at is null and end_date is null limit '.$limit.';');
+        else
+            return DB::select('select projects.id,projects.name,description from projects left join storico_progettis on projects.id=storico_progettis.project_id where idea_start_at is not null and deleted_at is null and end_date is null;');
+    }
+
+    protected function getIdee($limit) {
+        if($limit!==-1)
+            return DB::select('select id,name,description from projects where idea_start_at is null and deleted_at is null limit   '.$limit.';');
+        else
+            return DB::select('select id,name,description from projects where idea_start_at is null and deleted_at is null;');
+    }
+
+    protected function deleteProject($id) {
+        DB::update('update projects set deleted_at=timestamp("'.now()->toDateString().'") where id='.$id);
+        DB::insert('insert into storico_progettis(project_id,end_date,ended) values ('.$id.',timestamp("'.now()->toDateString().'"),0);');
+
+        return redirect()->back();
+    }
+
+}

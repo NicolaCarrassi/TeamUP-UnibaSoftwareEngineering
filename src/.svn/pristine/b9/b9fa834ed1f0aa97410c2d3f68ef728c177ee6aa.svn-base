@@ -1,0 +1,74 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+
+//Route necessarie per l'autenticazione mediante social
+Route::get('login/{driver}', 'Auth\LoginController@redirectToProvider');
+Route::get('login/{driver}/callback', 'Auth\LoginController@handleProviderCallback');
+
+
+
+//Route a cui possono accedere anche gli utenti non registrati
+Route::get('/','FooterController@welcomePage');
+Route::get('/chisiamo','FooterController@chiSiamo')->name('chiSiamo');
+Route::get('/terms','FooterController@terms')->name('terms');
+Route::get('/regole', 'FooterController@regole')->name('regole');
+
+//Route relative a tutti i percorsi implementati nativamente dal framework
+Auth::routes();
+
+//Route per la home page
+Route::get('/home', 'HomeController@index')->name('home');
+
+
+//Route relative all'idea progettuale
+Route::post('/home/{tipology}/{id}', 'Idea\ProjectualIdeaController@store')->name('storeProjectualIdea');
+Route::get('/idea/create', 'Idea\ProjectualIdeaController@create')->name('createProjectualIdea');
+Route::get('/idea/modify/{id}', 'Idea\ProjectualIdeaController@modify')->name('modifyProjectualIdea');
+Route::get('/idea/delete/{id}', 'Idea\ProjectualIdeaController@delete')->name('deleteProjectualIdea');
+Route::post('/home{id}', 'Idea\ProjectualIdeaController@remove')->name('removeProjectualIdea');
+
+//Route relative al profilo
+Route::post('/profile/conf/confermamodifica','ModProfileController@confermamodifica')->name('confmod');
+Route::get('/profile/mod/modprofile','ModProfileController@modprofile')->name('modprofile');
+Route::get('/profile/rem/rimuovicomp','ModProfileController@removeComp')->name('remcomp');
+Route::get('profile/canc/cancellaprofilo','ModProfileController@cancellaProfilo')->name('cancprofilo');
+Route::get('/profile/storico/storicoprog','ProjectController@showStoricoProg')->name('storicoprog');
+Route::get('/profile/progattivi/progettiattivi','ProjectController@showStoricoProgettiAttivi')->name('progattivi');
+Route::get('/profile/partecip/partecipazioni','ProjectController@showListaPartecipazioni')->name('partecip');
+Route::get('/profile/{user}', 'ProfilesController@index')->name('profile');
+
+//Route relative alla gestione della ricerca delle idee e alla visualizzazione di tutte le idee
+Route::get('/search', 'idea\ControllerShowIdeas@showView')->name('searchPane');
+Route::post('/search/results', 'idea\ControllerShowIdeas@search')->name('effettuaRicerca');
+Route::get('/search/all', 'idea\ControllerShowIdeas@getAllAvailableIdeas')->name('allIdeas');
+
+
+//Route per le segnalazioni
+Route::post('/report/reportidea', 'utility\ReportController@makeReportRequest')->name('segnalaIdee');
+Route::post('/report/reportuser', 'utility\ReportController@makeReportRequestUser')->name('segnalaUser');
+
+//Route per le richieste di partecipazione
+Route::post('/request', 'idea\RequestController@makeRequest')->name('makeRequest');
+
+//Route per la gestione dell'admin
+Route::get('/admin/','admin\AdminLoginController@showLoginAdmin')->name('adminlogin');
+Route::post('/admin/login','admin\AdminLoginController@loginAdmin')->name('conflogin');
+Route::get('/admin/{admin}/home/','admin\AdminLoginController@home')->name('adminhome');
+Route::get('/admin/register','admin\AdminLoginController@showRegisterAdmin')->name('regadmin');
+Route::post('/admin/confreg/register','admin\AdminLoginController@registerAdmin')->name('confreg');
+Route::get('/admin/{admin}/segnalazioni/','admin\AdminController@showAllReports')->name('adminreports');
+Route::get('/admin/{admin}/idee/','admin\AdminController@showAllIdeas')->name('adminideas');
+Route::post('/admin/accept/acceptreport/{report}','admin\AdminController@acceptReport')->name('acceptreport');

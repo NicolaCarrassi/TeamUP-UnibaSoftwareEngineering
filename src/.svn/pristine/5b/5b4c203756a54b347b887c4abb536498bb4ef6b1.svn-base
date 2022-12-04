@@ -1,0 +1,199 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\City;
+use App\Competence;
+use App\Http\Controllers\Controller;
+use App\Providers\RouteServiceProvider;
+use App\Skill;
+use App\User;
+use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+
+class RegisterController extends Controller
+{
+    /*
+    |--------------------------------------------------------------------------
+    | Register Controller
+    |--------------------------------------------------------------------------
+    |
+    | This controller handles the registration of new users as well as their
+    | validation and creation. By default this controller uses a trait to
+    | provide this functionality without requiring any additional code.
+    |
+    */
+
+    use RegistersUsers;
+
+    /**
+     * Where to redirect users after registration.
+     *
+     * @var string
+     */
+    protected $redirectTo = RouteServiceProvider::HOME;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct(){
+        $this->middleware('guest');
+    }
+
+
+    /**
+     * Show the application registration form.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function showRegistrationForm(){
+        $listaCompetenze = DB::table('competences')->where('verified', 1)->get();
+        return view('auth.register',['competenze' => $listaCompetenze, 'citta'=> City::all()]);
+    }
+
+    /**
+     * Get a validator for an incoming registration request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function validator(array $data){
+
+        return Validator::make($data, [
+            'username'=>['required', 'string', 'max:255', 'unique:users', 'regex: /^[a-z0-9_-]{3,255}$/'],
+            'name' => ['required', 'string', 'max:255'],
+            'surname' =>['required', 'string', 'max:255'],
+            'birth_date'=>['required', 'date', 'before:-13 years'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'avatar' =>['sometimes', 'image','mimes:jpg,jpeg,bmp,svg,png', 'max:5000'],
+        ]);
+    }
+
+    /**
+     * Create a new user instance after a valid registration.
+     *
+     * @param  array  $data
+     * @return \App\User istanza dell'utente creato
+     */
+    protected function create(array $data){
+        $citta = $data['city'];
+
+        // controllo se è stata inserita l'immagine
+        if(request()->has('avatar')){
+
+
+            $file = request()->file('avatar');
+            $extension = $file->getClientOriginalExtension();
+            $nome= $data['username'].'.'.$extension;
+            $file->storeAs('users-avatar', $nome,'public');
+
+
+            //controllo se non ha inserito la città
+            if($citta === 'Seleziona una città...') {
+                $user = User::create([
+                    'username' => $data['username'],
+                    'name' => $data['name'] . ' ' . $data['surname'],
+                    'birth_date' => $data['birth_date'],
+                    'email' => $data['email'],
+                    'password' => Hash::make($data['password']),
+                    'avatar' => $nome,
+                ]);
+                //ha inserito la città e l'immagine
+            } else {
+                $user = User::create([
+                    'username' => $data['username'],
+                    'name' => $data['name'] . ' ' . $data['surname'],
+                    'birth_date' => $data['birth_date'],
+                    'email' => $data['email'],
+                    'password' => Hash::make($data['password']),
+                    'avatar' => $nome,
+                    'city' => $citta,
+                    ]);
+            }
+            //in caso l'utente non abbia inserito l'immagine
+        } else {
+            //controllo che l'utente non abbia inserito la città
+            if ($citta === 'Seleziona una città...') {
+                $user = User::create([
+                    'username' => $data['username'],
+                    'name' => $data['name'] . ' ' . $data['surname'],
+                    'birth_date' => $data['birth_date'],
+                    'email' => $data['email'],
+                    'password' => Hash::make($data['password']),
+                ]);
+                //l'utente ha inserito una città valida
+            } else {
+                $user = User::create([
+                    'username' => $data['username'],
+                    'name' => $data['name'] . ' ' . $data['surname'],
+                    'birth_date' => $data['birth_date'],
+                    'email' => $data['email'],
+                    'password' => Hash::make($data['password']),
+                    'city' => $citta,
+                ]);
+            }
+        }
+
+
+        //competenze
+        foreach ($data as $key => $value){
+            if($this->controlValue($key)) {
+                $competence= $this->getCompetenza($key);
+                Skill::create([
+                    'user_id' => $user->id,
+                    'competence_id' => $competence,
+                    'level' => $value,
+                ]);
+            }
+        }
+
+        return $user;
+    }
+
+
+    /**
+     * Controlla che una keyword sia diversa da quelle riservate ai dati personali dell'utente,
+     * quindi essa è una competenza
+     *
+     * @param $element string  la chiave di cui si vuole conoscere se differisce dai token riservati
+     * @return bool true se diverso (quindi rappresenta una competenza), false altrimenti
+     *
+     */
+    private  function controlValue($element){
+        $banned_keywords = ['_token', 'username', 'name', 'avatar', 'surname', 'birth_date', 'city', 'email', 'password','otherCompetences', 'password_confirmation', 'competences', 'otherCompetences'];
+        $flag = true;
+
+        foreach ($banned_keywords as $prova) {
+            if ($prova === $element) {
+                $flag = false;
+                break;
+            }
+        }
+        return $flag;
+    }
+
+    /**
+     * Ricerca l'id della competenza passata in input, formattandola come nel db
+     *
+     * @param $key string valore della keyword da convertire
+     *
+     * @return int id della competenza
+     */
+    private function getCompetenza($key){
+        $competenza = str_replace('_', ' ', $key);
+
+        $id = Competence::firstOrCreate(['competence' => $competenza]);
+
+        return $id->id;
+    }
+
+
+
+
+
+}

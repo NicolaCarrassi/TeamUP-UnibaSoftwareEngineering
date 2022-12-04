@@ -1,0 +1,97 @@
+@extends('idea.riepilogativePageTemplate')
+
+@section('content')
+    @parent
+    <div class="col"  style="margin-left: 22%; width: 78%; padding: 0%;">
+        <div class="row" style="width: 70%;">
+            <h1 style="margin-left: 30px;"><strong>Aggiornamenti Progetto</strong></h1>
+        </div>
+        <div class="row mt-5" style="margin: 0%; background-color: #b2b2b2; width: 100%;">
+            <table class="table table-bordered text-white" id="compiti" name="compiti" style="font-size: 18px;">
+                <thead>
+                <tr>
+                    <th scope="col" style="font-size: 20px;"><strong>Compito</strong></th>
+                    <th scope="col" style="font-size: 20px;"><strong>Utente</strong></th>
+                </tr>
+                </thead>
+                <tbody>
+                @if(count($compiti) < 2)
+                    @foreach($compiti as $compito)
+                        <tr>
+                            <th scope="row"><span class="circleYellow" style="margin-left: 22px;">
+                                </span><strong>{{$compito->description}}</strong>
+                            </th>
+                            <th scope="row"><strong>{{$compito->username}}</strong></th>
+                        </tr>
+                    @endforeach
+                @else
+                    @for($i = 0; $i < 2; $i++)
+                        <tr>
+                            <th scope="row"><span class="circleYellow" style="margin-left: 22px;">
+                                </span><strong>{{$compiti[$i]->description}}</strong>
+                            </th>
+                            <th scope="row"><strong>{{$compiti[$i]->username}}</strong></th>
+                        </tr>
+                    @endfor
+                @endif
+                </tbody>
+            </table>
+            <div class="row" style="width: 100%;">
+                @can('update', $progetto)
+                    <button id="btnAssegnaCompiti" type="button" class="btn btn-secondary ml-auto" onclick="showAddNewTask()"><strong>Assegna compiti</strong></button>
+                    <button id="btnMostraCompiti" type="button" class="btn btn-secondary ml-0" onclick="showAllTasks()"><strong>Mostra tutti i compiti</strong></button>
+                @endcan
+                @cannot('update', $progetto)
+                    <button id="btnMostraCompiti" type="button" class="btn btn-secondary ml-auto" onclick="showAllTasks()"><strong>Mostra tutti i compiti</strong></button>
+                @endcannot
+            </div>
+        </div>
+        <div class="row mt-2" style="margin: 0%; width: 100%;">
+            @if(count($aggiornamenti) < 2)
+                @foreach($aggiornamenti as $aggiornamento)
+                    <div class="circleGreen text-dark col-md-10" style="width: 100%;
+                    word-wrap: break-word;">
+                        <strong>
+                            {{$aggiornamento->username}}: {{$aggiornamento->description}}
+                        </strong>
+                    </div>
+                @endforeach
+            @else
+                @for($i = 0; $i < 2; $i++)
+                    <div class="circleGreen text-dark col-md-10" style="width: 100%;
+                    word-wrap: break-word;">
+                        <strong>
+                            {{$aggiornamenti[$i]->username}}: {{$aggiornamenti[$i]->description}}
+                        </strong>
+                    </div>
+                @endfor
+            @endif
+        </div>
+        <div class="row" style="width: 100%;">
+            <button id="btnMostraAggiornamenti" type="button" class="btn btn-secondary ml-auto" onclick="showAllFeeds()"><strong>Mostra aggiornamenti</strong></button>
+        </div>
+        <form method="POST" action="{{route('addNewFeed', $progetto->id)}}">
+            @csrf
+            <div class="form-group row mt-5" style="margin: 0; width: 100%;">
+                <div class="col-md-10">
+                    <input id="feed" type="text" maxlength="150" minlength="2" style="width: 100%;"
+                           placeholder="Inserisci qui un aggiornamento sul progetto"
+                           class="form-control @error('feed') is-invalid @enderror" name="feed"
+                           value="{{ old('feed') }}" required autocomplete="feed" autofocus>
+
+                    @error('feed')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+                <div class="col-md-2 d-flex">
+                    <input type="submit" value="Aggiungi" onclick="this.disabled = true; this.form.submit();" class="btn btn-warning font-weight-bold">
+                </div>
+            </div>
+        </form>
+    </div>
+    @include('idea.modalAssignedTask', $compiti)
+    @include('idea.modalFeeds', $aggiornamenti)
+    @include('idea.modalTaskLeader', $progetto)
+@endsection

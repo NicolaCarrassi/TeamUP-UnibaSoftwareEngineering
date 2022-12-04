@@ -1,0 +1,70 @@
+/**
+ * La funzione permette di mostrare il modal richiesto dall'utente
+ *
+ * @param id identificativo dell'oggetto per il quale si apre la finestra modal (es in caso di segnalazione dell'idea l'id
+ *          è l'id dell'idea che si intende segnalare)
+ * @param typemodal tipo di modal (request o segnalazione)
+ * @param object nome della tipologia del modal (User, Iroject, Request), NECESSARIO per l'attribuzione del valore al bottone nascosto
+ */
+function startModal(id,typemodal,object){
+
+    $(document).ready(function(){
+        //atttribuisco valore dell'identificativo al bottone nascosto presente nei modal
+        document.getElementById('hiddenButton'+object).setAttribute('value', id);
+
+        // tpyemodal 1 indica che il modal richiesto è relativo ad una richiesta
+        if(typemodal ===1) {
+
+            //avvio del modal della richiesta
+            $('#requestModal').on("show.bs.modal", function () {
+                var modal = $(this);
+                //ricerca del titolo della richiesta
+                modal.find('.modal-title').text('Richiesta di partecipazione: ');
+            })
+            //altrimenti il modal richiesto è relativo ad una segnalazione
+        }else {
+            // viene specificato l'oggetto della segnalazione
+            if(object ==='User') {
+                document.getElementById('modheaderuser').style.backgroundColor="red";
+
+                $('#segnalazioneModalUser').on("show.bs.modal", function () {
+                    var modal = $(this);
+                    modal.find('.modal-title').text('Segnalazione Utente');
+                })
+                // altrimenti se l'oggetto inserito è idea
+            }else if(object ==='Idea') {
+                document.getElementById('modheader').style.backgroundColor="red";
+
+                $('#segnalazioneModal').on("show.bs.modal", function () {
+                    var modal = $(this);
+                    modal.find('.modal-title').text('Segnalazione Idea');
+                })
+            }
+        }
+    })
+}
+
+/**
+ * La funzione effettua il controllo dei dati inseriti prima di inoltrare la richiesta
+ *
+ * @returns {boolean} true se la motivazione è stata scelta, false altrimenti
+ */
+function checkData() {
+    const nonScelta = "-1"  //valore della segnalazione non valida
+    let motivazione = document.getElementById('motivoSegnalazione')
+
+
+
+   //Controllo che un utente abbia inserito una motivazine per la propria segnalazione
+    if( motivazione.options[motivazione.selectedIndex].value !== nonScelta) {
+        return true
+    }else {
+        alert('È necessario impostare la motivazione della segnalazione')
+        return false
+    }
+
+}
+
+
+
+

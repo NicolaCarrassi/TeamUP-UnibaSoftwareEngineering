@@ -1,0 +1,67 @@
+<div id="visualizzaRichieste" class="modal fade" tabindex="-1" role="dialog" style="margin-top: 5%;" >
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #f8b323">
+                <h5 id="requestsHeader" class="modal-title"><strong>Richieste ricevute</strong></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @if(count($richieste) === 0)
+                <div class="modal-body" style="overflow-x: hidden; overflow-y: auto; max-height: 400px;">
+                    <p class="text-dark" style="font-size: 16px;"><strong>Nessuna richiesta presente</strong></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Esci</button>
+                </div>
+            @else
+                <form method="POST" action="{{route('setRequestResult', $progetto->id)}}">
+                    @csrf
+                    <div class="modal-body" style="overflow-x: hidden; overflow-y: auto; max-height: 400px;">
+                        <table id="table_requests" name="resquests" class="table-responsive">
+                            <caption>Richieste</caption>
+                            <tr>
+                                <th style="max-width: 100px; word-wrap: break-word;" scope="col"><p class="text-dark mr-lg-2" style="font-size: 16px;"><strong>Username</strong></p></th>
+                                <th style="max-width: 250px; word-wrap: break-word;" scope="col"><p class="text-dark ml-lg-2 mr-lg-2" style="font-size: 16px;"><strong>Descrizione</strong></p></th>
+                                <th style="max-width: 200px; word-wrap: break-word;" scope="col"><p class="text-dark ml-lg-2 mr-lg-0" style="font-size: 16px;"><strong>Ora Invio</strong></p></th>
+                                <th scope="col"><p class="text-dark ml-lg-0 mr-lg-2" style="font-size: 16px;"><strong>Stato</strong></p></th>
+                            </tr>
+                            @foreach($richieste as $richiesta)
+                                <tr>
+                                    <td style="max-width: 100px; word-wrap: break-word;"><p class="text-dark ml-lg-2" style="font-size: 16px;"><strong>{{$richiesta->username}}</strong></p></td>
+                                    <td style="max-width: 250px; word-wrap: break-word;"><details class="ml-lg-2 mr-lg-2"><p class="text-dark" style="font-size: 16px;">{{$richiesta->description}}</p></details></td>
+                                    <td style="max-width: 200px; word-wrap: break-word;"><p class="text-dark ml-lg-2 mr-lg-0" style="font-size: 16px;"><strong>{{$richiesta->sent_at}}</p></td>
+                                    @switch($richiesta->state)
+                                        @case(\App\Request::IN_SOSPESO)
+                                             <td name="cerchioStato"><div class="circleYellow" id="cerchioStato{{$richiesta->id}}"></div></td>
+                                             @if($progetto->numberOfComponentsRequired !== $progetto->numberOfComponentsActual)
+                                                 <td><button type="button" id="buttonAccetta{{$richiesta->id}}" class="btn btn-outline-success ml-lg-2 mr-lg-2" onclick="setEsitoRichiesta('buttonAccetta{{$richiesta->id}}','buttonRifiuta{{$richiesta->id}}', '{{$richiesta->id}}', 1, 'cerchioStato{{$richiesta->id}}')">Accetta</button></td>
+                                                 <td><button type="button" id="buttonRifiuta{{$richiesta->id}}" class="btn btn-outline-danger" onclick="setEsitoRichiesta('buttonAccetta{{$richiesta->id}}','buttonRifiuta{{$richiesta->id}}', '{{$richiesta->id}}', 2, 'cerchioStato{{$richiesta->id}}')">Rifiuta</button></td>
+                                                 <td><input type="text" name="{{$richiesta->id}}" hidden="true" style="width: 10%;" id="{{$richiesta->id}}" value="0"></td>
+                                             @endif
+                                        @break
+                                        @case(\App\Request::RIFIUTATA)
+                                             <td><div class="circleRed"></div></td>
+                                        @break
+                                        @case(\App\Request::ACCETTATA)
+                                             <td><div class="circleGreen"></div></td>
+                                        @break
+                                        @endswitch
+                                </tr>
+                            @endforeach
+                        </table>
+                    </div>
+                    @if($progetto->numberOfComponentsRequired !== $progetto->numberOfComponentsActual)
+                        <div class="modal-footer">
+                            <input type="submit" value="Conferma" class="btn btn-warning font-weight-bold">
+                        </div>
+                    @else
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-warning" data-dismiss="modal"><strong>Esci</strong></button>
+                        </div>
+                    @endif
+                </form>
+            @endif
+        </div>
+    </div>
+</div>

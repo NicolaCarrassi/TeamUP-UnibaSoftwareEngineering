@@ -1,0 +1,82 @@
+<?php
+
+define('PROVIDERS','providers');
+define('ALIASES', 'aliases');
+
+return array (
+  'facade/ignition' =>
+  array (
+    PROVIDERS =>
+    array (
+      0 => 'Facade\\Ignition\\IgnitionServiceProvider',
+    ),
+   ALIASES =>
+    array (
+      'Flare' => 'Facade\\Ignition\\Facades\\Flare',
+    ),
+  ),
+  'fideloper/proxy' =>
+  array (
+    PROVIDERS =>
+    array (
+      0 => 'Fideloper\\Proxy\\TrustedProxyServiceProvider',
+    ),
+  ),
+  'fruitcake/laravel-cors' =>
+  array (
+    PROVIDERS =>
+    array (
+      0 => 'Fruitcake\\Cors\\CorsServiceProvider',
+    ),
+  ),
+  'laravel/socialite' =>
+  array (
+    PROVIDERS =>
+    array (
+      0 => 'Laravel\\Socialite\\SocialiteServiceProvider',
+    ),
+   ALIASES =>
+    array (
+      'Socialite' => 'Laravel\\Socialite\\Facades\\Socialite',
+    ),
+  ),
+  'laravel/tinker' =>
+  array (
+    PROVIDERS =>
+    array (
+      0 => 'Laravel\\Tinker\\TinkerServiceProvider',
+    ),
+  ),
+  'laravel/ui' =>
+  array (
+    PROVIDERS =>
+    array (
+      0 => 'Laravel\\Ui\\UiServiceProvider',
+    ),
+  ),
+  'munafio/chatify' =>
+  array (
+    PROVIDERS =>
+    array (
+      0 => 'Chatify\\ChatifyServiceProvider',
+    ),
+   ALIASES =>
+    array (
+      'Chatify' => 'Chatify\\Facades\\ChatifyMessenger',
+    ),
+  ),
+  'nesbot/carbon' =>
+  array (
+    PROVIDERS =>
+    array (
+      0 => 'Carbon\\Laravel\\ServiceProvider',
+    ),
+  ),
+  'nunomaduro/collision' =>
+  array (
+    PROVIDERS =>
+    array (
+      0 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+    ),
+  ),
+);

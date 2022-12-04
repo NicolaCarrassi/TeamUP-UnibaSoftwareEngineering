@@ -1,0 +1,99 @@
+<?php
+
+namespace App\Http\Controllers\idea;
+
+use App\Category;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class ControllerShowIdeas extends Controller{
+    const CAT_ERROR = -1;
+    const SEARCH_TITLE = 'name';
+    const SEARCH_CATEGORY = 'category_id';
+    const SELECT_NAME = "name like '%";
+    const SELECT_CATEGORY = 'category_id = ';
+
+    const TITLE_ALL = "Tutti i progetti disponibili";
+    const TITLE_ONLY_NAME = "Hai cercato: ";
+    const TITLE_CATEGORY_ONLY = "Hai ricercato tutti i progetti in: ";
+    const TITLE_FULL_SEARCH_1 = "Hai ricercato: ";
+    const TITLE_FULL_SEARCH_2 = " nella categoria ";
+
+    public function showView(){
+        $query = 'numberOfComponentsActual < numberOfComponentsRequired and ' . Auth::id() . ' != leader_id and ';
+        $query = $query.'id not in (SELECT project_id from report_projects where '. Auth::id() . ' = user_id)';
+        $query = $query.' and id not in (SELECT project_id from requests where '. Auth::id() . ' = teammate_id)';
+
+        $lista_progetti = DB::table('projects')
+            ->whereRaw($query)->orderByRaw('idea_proposal_at desc')->take(3)->get();
+        $lista_categorie = Category::all();
+
+        return view('searchIdeas.searchIdeas',['ideas'=>$lista_progetti , 'categorie'=>$lista_categorie]);
+    }
+
+
+    public function search(Request $request){
+        $query = 'numberOfComponentsActual < numberOfComponentsRequired and ' . Auth::id() . ' != leader_id and ';
+        $query = $query.'id not in (SELECT project_id from report_projects where '. Auth::id() . ' = user_id)';
+        $query = $query.' and id not in (SELECT project_id from requests where '. Auth::id() . ' = teammate_id)';
+
+        $data = $request->all();
+        $item = 0;
+
+
+
+
+        if($data[self::SEARCH_TITLE] != null)
+            $item += 1;
+
+        if($data[self::SEARCH_CATEGORY] != self::CAT_ERROR)
+            $item += 2;
+
+
+        switch($item){
+            case 1 :
+                $select = self::SELECT_NAME . $data[self::SEARCH_TITLE] ."%'" ;
+                $title = self::TITLE_ONLY_NAME . $data[self::SEARCH_TITLE];
+                break;
+            case 2:
+                $select = self::SELECT_CATEGORY . $data[self::SEARCH_CATEGORY];
+                $title = self::TITLE_CATEGORY_ONLY . Category::getLabelFromNuber($data[self::SEARCH_CATEGORY]);
+                break;
+            default:
+                $select = self::SELECT_NAME . $data[self::SEARCH_TITLE] ."%' and ". self::SELECT_CATEGORY . $data[self::SEARCH_CATEGORY];
+                $title = self::TITLE_FULL_SEARCH_1 . $data[self::SEARCH_TITLE] . self::TITLE_FULL_SEARCH_2 . Category::getLabelFromNuber($data[self::SEARCH_CATEGORY]);
+        }
+
+
+        $searchedItems = DB::table('projects')
+            ->whereRaw($query. ' and '. $select)->orderByRaw('sponsored desc, idea_proposal_at desc')->simplePaginate(5);
+
+
+        return view('searchIdeas.allIdeas',['projects'=> $searchedItems, 'title' => $title]);
+    }
+
+
+
+    /**
+     * Il metodo genera la view contenente tutte le idee progettuali in cui l'utente che ricerca non ha
+     * creato l'idea e in cui il numero di componenti dell'idea è minore di quelli richiesti dal leader dell'idea
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function getAllAvailableIdeas(){
+
+        $query = 'numberOfComponentsActual < numberOfComponentsRequired and leader_id <> ' . Auth::id()  ;
+        $query =  $query.' and id not in (SELECT project_id from report_projects where '. Auth::id() . ' = user_id)';
+        $query = $query.' and id not in (SELECT project_id from requests where '. Auth::id() . ' = teammate_id)';
+
+        $listaIdee = DB::table('projects')->whereRaw($query)
+            ->orderByRaw('sponsored desc, idea_proposal_at desc')->simplePaginate(5);
+
+
+        return view('searchIdeas.allIdeas',['projects'=> $listaIdee, 'title' => self::TITLE_ALL]);
+    }
+
+
+}
